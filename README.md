@@ -6,6 +6,7 @@ npm install
 ```
 
 ### Compiles and hot-reloads for development
+서버실행코드
 ```
 npm run serve
 ```
