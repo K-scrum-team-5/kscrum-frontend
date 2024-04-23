@@ -1,26 +1,28 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <genre-selection v-if="!selectedGenre" @genre-selected="onGenreSelected" />
+    <movie-feed v-else :genre="selectedGenre" />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import GenreSelection from './GenreSelection.vue';
+import MovieFeed from './MovieFeed.vue';
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
-  }
-}
+    GenreSelection,
+    MovieFeed,
+  },
+  data() {
+    return {
+      selectedGenre: null,
+    };
+  },
+  methods: {
+    onGenreSelected(genre) {
+      this.selectedGenre = genre;
+    },
+  },
+};
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
