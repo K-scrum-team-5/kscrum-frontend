@@ -1,18 +1,26 @@
 <template>
+  <div>
+    <!-- <StoryBar_Page/> -->
+  </div>
+  
+  <StoryProfiles/>
 
   <SideBar_Page/>
   
   <Container_Page :인스타데이터 = "인스타데이터"/>
 
-  <div class="footer">
-    
- </div>
+  <div class="footer"></div>
+  
+  <RightSideBar />
 </template>
 
 <script>
 import instaData from './assets/instaData';
 import Container_Page from './components/Container_Page.vue';
 import SideBar_Page from './components/SideBar_Page.vue';
+import StoryProfiles from './components/StoryProfiles.vue';
+import RightSideBar from './components/RightSideBar.vue';
+
 
 export default {
   name: 'App',
@@ -22,8 +30,10 @@ export default {
     }
   },
   components: {
-   Container_Page,
-   SideBar_Page,
+    Container_Page,
+    SideBar_Page,
+    StoryProfiles,
+    RightSideBar,
   }
 }
 </script>
@@ -85,9 +95,18 @@ ul {
 .input-plus {
   cursor: pointer;
 }
+.app-container {
+  display: flex;
+}
+
+.main-content {
+  flex: 1;
+  margin-right: 250px;
+}
+
 #app {
   box-sizing: border-box;
-  font-family: "consolas";
+  font-family: 'consolas';
   margin-top: 60px;
   width: 100%;
   max-width: 460px;
