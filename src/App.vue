@@ -1,28 +1,20 @@
-<template>
-  <div id="app">
-    <genre-selection v-if="!selectedGenre" @genre-selected="onGenreSelected" />
-    <movie-feed v-else :genre="selectedGenre" />
-  </div>
+Init_movie<template>
+  <v-app>
+    <v-main>
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import GenreSelection from './GenreSelection.vue';
-import MovieFeed from './MovieFeed.vue';
+//import Init_movie from './views/Init_movie.vue'
 
 export default {
+  name: 'App',
   components: {
-    GenreSelection,
-    MovieFeed,
-  },
-  data() {
-    return {
-      selectedGenre: null,
-    };
-  },
-  methods: {
-    onGenreSelected(genre) {
-      this.selectedGenre = genre;
-    },
-  },
-};
+    //Init_movie
+  }
+}
 </script>
+
+<style src="./styles/style.scss" lang="scss"></style>
