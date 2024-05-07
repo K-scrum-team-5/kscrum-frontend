@@ -1,20 +1,35 @@
 <template>
-  <div>
-    <!-- <StoryBar_Page/> -->
-  </div>
-  
-  <StoryProfiles/>
+  <v-app>
+    <v-main>
+      <router-view/>  <!--/choice-->
+      <template v-if="!isChoiceRoute"> 
+        <v-container>
+          <v-btn 
+            block
+            large
+            class = "goto_choice_btn"
+            @click="goto_choice">
+            영화초기선택
+          </v-btn>
+        </v-container>
 
-  <SideBar_Page/>
+        <div>
+          <!-- <StoryBar_Page/> -->
+        </div>
+        <StoryProfiles/>
+        <SideBar_Page/>
+        <Container_Page :인스타데이터 = "인스타데이터"/>
+        <div class="footer"></div>
   
-  <Container_Page :인스타데이터 = "인스타데이터"/>
-
-  <div class="footer"></div>
-  
-  <RightSideBar />
+        <RightSideBar />
+      </template>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import instaData from './assets/instaData';
 import Container_Page from './components/Container_Page.vue';
 import SideBar_Page from './components/SideBar_Page.vue';
@@ -34,7 +49,20 @@ export default {
     SideBar_Page,
     StoryProfiles,
     RightSideBar,
-  }
+  },
+  setup() {
+    const router = useRouter(); 
+    const route = useRoute(); 
+    const goto_choice = () => { // 경로 이동
+      console.log("버튼 클릭됨");
+      router.push('/choice');
+    };
+    const isChoiceRoute = computed(() => route.path === '/choice');
+    return {
+      goto_choice, //이벤트 연결
+      isChoiceRoute,
+    };
+  },
 }
 </script>
 
@@ -103,7 +131,24 @@ ul {
   flex: 1;
   margin-right: 250px;
 }
-
+.goto_choice_btn {
+    text-align: center;
+    color: black;
+    display: block;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px; 
+    border-radius: 5px;
+    background-color: white;
+    border: 2px solid gray;
+    color: gray;
+}
+.v-btn {
+  text-transform: none;
+}
+.v-container {
+  padding-top: 20px;
+}
 #app {
   box-sizing: border-box;
   font-family: 'consolas';
