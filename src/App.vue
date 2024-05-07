@@ -1,43 +1,49 @@
 <template>
-  <div>
-    <!-- <StoryBar_Page/> -->
-  </div>
   
   <StoryProfiles/>
 
   <SideBar_Page/>
   
-  <Container_Page :인스타데이터 = "인스타데이터"/>
+  <Container_Page :movies = "movies"/>
 
   <div class="footer"></div>
   
-  <RightSideBar />
+  <!-- <RightSideBar /> -->
 </template>
 
 <script>
-import instaData from './assets/instaData';
+import axios from 'axios';
 import Container_Page from './components/Container_Page.vue';
 import SideBar_Page from './components/SideBar_Page.vue';
 import StoryProfiles from './components/StoryProfiles.vue';
-import RightSideBar from './components/RightSideBar.vue';
-
+// import RightSideBar from './components/RightSideBar.vue';
 
 export default {
   name: 'App',
   data(){
     return{
-      인스타데이터:instaData,
+      movies : [],
     }
   },
   components: {
     Container_Page,
     SideBar_Page,
     StoryProfiles,
-    RightSideBar,
-  }
+    // RightSideBar,
+  },
+    mounted() {
+      axios.get('http://49.50.174.94:8080/api/movie/posters?page=2&size=8')
+        .then(response => {
+          this.movies = response.data;
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    }
+  
 }
 </script>
-
 <style>
 body {
   margin: 0;
