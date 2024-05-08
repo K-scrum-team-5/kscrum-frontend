@@ -1,6 +1,6 @@
 <template>
  <div>
-    <Post_Page :인스타데이터="인스타데이터[i]" v-for="(a, i) in 인스타데이터" :key="i" @toggle-like="toggleLike" />
+    <Post_Page :movies="movies[i]" v-for="(a, i) in movies" :key="i" @toggle-like="toggleLike" />
   </div>
 </template>
 
@@ -12,11 +12,11 @@ export default {
     Post_Page,
   },
   props: {
-    인스타데이터: Array,
+    movies: Array,
   },
   methods: {
     toggleLike(postName) {
-      const post = this.인스타데이터.find(post => post.name === postName);
+      const post = this.data.find(post => post.name === postName);
       if (post) {
         post.liked = !post.liked;
       }

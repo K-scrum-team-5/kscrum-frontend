@@ -15,22 +15,22 @@
 
         <div>
           <!-- <StoryBar_Page/> -->
+          <StoryProfiles/>
+          <SideBar_Page/>
+          <Container_Page :movies="movies"/> <!-- ':movies' 대신 원래 'develop'에 있던 ':인스타데이터' 사용을 고려 -->
+          <div class="footer"></div>
+          <RightSideBar />
         </div>
-        <StoryProfiles/>
-        <SideBar_Page/>
-        <Container_Page :인스타데이터 = "인스타데이터"/>
-        <div class="footer"></div>
-  
-        <RightSideBar />
       </template>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import axios from 'axios';
 import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import instaData from './assets/instaData';
+//import instaData from './assets/instaData';
 import Container_Page from './components/Container_Page.vue';
 import SideBar_Page from './components/SideBar_Page.vue';
 import StoryProfiles from './components/StoryProfiles.vue';
@@ -41,7 +41,7 @@ export default {
   name: 'App',
   data(){
     return{
-      인스타데이터:instaData,
+      movies: [],
     }
   },
   components: {
@@ -51,6 +51,7 @@ export default {
     RightSideBar,
   },
   setup() {
+    console.log('App setup');
     const router = useRouter(); 
     const route = useRoute(); 
     const goto_choice = () => { // 경로 이동
@@ -63,6 +64,17 @@ export default {
       isChoiceRoute,
     };
   },
+  mounted() {
+    console.log('App mounted');
+    axios.get('http://49.50.174.94:8080/api/movie/posters?page=2&size=8')
+        .then(response => {
+          this.movies = response.data;
+          console.log(response.data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  }
 }
 </script>
 
