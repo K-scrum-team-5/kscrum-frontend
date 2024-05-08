@@ -1,23 +1,23 @@
 <template>
   <div class="post" style="border: 5px ridge">
     <div class="post-body">
-      <img :src="인스타데이터.postImage" alt="Post Image" @click="openModal">
+      <img :src="movies.url" alt="Post Image" @click="openModal">
     </div>
     <div class="post-content">
-    <div class="buttons">
+    <!-- <div class="buttons">
       <button class="like-btn" @click="toggleLike">{{ 인스타데이터.liked ? '좋아요  취소' : '좋아요' }}</button>
-    </div>
-      <p class="textover"><strong style="font-size: 18px;">{{ 인스타데이터.name }}</strong> {{ 인스타데이터.content }}</p>
-      <p class="date">{{ 인스타데이터.date }}</p>
+    </div> -->
+      <p class="textover"><strong style="font-size: 18px;">{{ movies.original_title }}</strong></p>
+      <p class="date">{{ movies.id }}</p>
     </div>
 
     <div v-if="showModal" class="modal" @click="closeModal">
       <div class="modal-content">
-        <img :src="인스타데이터.postImage" alt="Post Image">
+        <img :src="movies.url" alt="Post Image">
         <div class="modal-info">
-          <h3>{{ 인스타데이터.name }}</h3>
-          <p>{{ 인스타데이터.content }}</p>
-          <p class="date">{{ 인스타데이터.date }}</p>          
+          <h3>{{ movies.original_title }}</h3>
+          <!-- <p>{{ 인스타데이터.content }}</p> -->
+          <p class="date">{{ movies.id }}</p>          
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
 <script>
 export default {
   props: {
-    인스타데이터: Object,
+    movies: Object,
   },
   data() {
     return {
@@ -43,9 +43,9 @@ export default {
         this.showModal = false;
       }
     },
-    toggleLike() {
-      this.$emit('toggle-like', this.인스타데이터.name);
-    },
+    // toggleLike() {
+    //   this.$emit('toggle-like', this.인스타데이터.name);
+    // },
   },
 };
 </script>
@@ -141,7 +141,7 @@ export default {
 }
 
 .modal-content img {
-  width: 35%;
+  width: 50%;
   height: auto;
   object-fit: contain;
 }
