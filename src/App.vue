@@ -51,6 +51,7 @@ export default {
     RightSideBar,
   },
   setup() {
+    console.log('App setup');
     const router = useRouter(); 
     const route = useRoute(); 
     const goto_choice = () => { // 경로 이동
@@ -64,6 +65,7 @@ export default {
     };
   },
   mounted() {
+    console.log('App mounted');
     axios.get('http://49.50.174.94:8080/api/movie/posters?page=2&size=8')
         .then(response => {
           this.movies = response.data;
