@@ -3,7 +3,7 @@ body {
     padding: 0;
   }
   
-  //반응형 레이아웃
+  //반응형 레이아웃 >> 적용 안 되고 있음
   @media (max-width: 600px) {
     .movie-poster {
       width: 50%; //좁은 화면

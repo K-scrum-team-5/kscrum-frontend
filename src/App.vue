@@ -55,7 +55,7 @@ export default {
     const router = useRouter(); 
     const route = useRoute(); 
     const goto_choice = () => { // 경로 이동
-      console.log("버튼 클릭됨");
+      console.log("button clicked(/choice)");
       router.push('/choice');
     };
     const isChoiceRoute = computed(() => route.path === '/choice');

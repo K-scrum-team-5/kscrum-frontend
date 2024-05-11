@@ -22,15 +22,17 @@
         </v-card>
       </div>
 
-      <div v-for="genre in genres" :key="genre.name" class="genre-col">
-        <v-row class="genre-rowcol">
-          <v-col>
-            <h2>{{ genre.name }}</h2>
+      <div v-for="genre in genres" :key="genre.name">
+        <v-row>
+          <v-col class="genre-rowcol">
+            <h2>{{ genre.name }}
+              <v-btn @click="get_genre_random(genre)"> 초기화 </v-btn>
+            </h2>
           </v-col>
         </v-row>
 
         <v-row class="poster-row" justify="center">
-          <v-col v-for="movie in genre.movies" :key="movie.title" cols="6" md="2">
+          <v-col v-for="movie in genre.random_movies" :key="movie.title" cols="6" md="2">
             <v-card 
               @click="toggleSelection(movie)" 
               :class="isMovieSelected(movie) ? 'selected' : ''"
@@ -87,7 +89,7 @@
         const router = useRouter(); 
         const route = useRoute(); 
         const goToMovieFeed = () => {
-        console.log("완료 버튼 클릭됨");
+        console.log("button clicked(/)");
         router.push('/');
       };
       const isChoiceRoute = computed(() => route.path === '/');
@@ -98,8 +100,8 @@
     },
     */
     methods: {
-    toggleSelection(movie) {
-      const index = this.selectedMovies.findIndex(m => m.title === movie.title);
+      toggleSelection(movie) {
+        const index = this.selectedMovies.findIndex(m => m.title === movie.title);
         if (index === -1) {
         // 선택되지 않았다면 추가
           this.selectedMovies.push(movie);
@@ -115,17 +117,49 @@
       goToMovieFeed() {
         if (router) {
           router.push({ path: '/' });
-          console.log("완료 버튼 눌림");
+          console.log("button clicked(/)");
         } else {
           console.error("Router instance is undefined"); 
         }
       },
+      get_random() {
+        this.genres.forEach(genre => {
+          const genremovies_num = genre.movies.length;
+          const movie_num = Math.min(genremovies_num, 4);
+          const random_movies = [];
+          const randomIdx = this.random([...Array(genremovies_num).keys()]);
+          for(let i = 0; i<movie_num; i++){
+            random_movies.push(genre.movies[randomIdx[i]]);
+          }
+          genre.random_movies = random_movies;
+        });
+      },
+      get_genre_random(genre) {
+        const genremovies_num = genre.movies.length;
+        const movie_num = Math.min(genremovies_num, 4);
+        const random_movies = [];
+        const randomIdx = this.random([...Array(genremovies_num).keys()]);
+        for(let i = 0; i<movie_num; i++){
+          random_movies.push(genre.movies[randomIdx[i]]);
+        }
+        genre.random_movies = random_movies;
+      },
+      random(array){ //Fisher-Yates shuffle
+        for(let i = array.length-1; i>0; i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      },
+    },
+    mounted() {
+      this.get_random();
     },
   };
   </script>
   
-  <style scoped>
-  .init-movie {
+  <style lang="scss">
+ .init-movie {
     color: gray; 
     background-color: white; 
     text-align: center;
@@ -153,10 +187,21 @@
     position: absolute; 
     z-index: 10;
   }
-  .genre-rowcol {
-    padding-left: 70px;
-    padding-right: 70px;
-    margin-bottom: 50px;
+  @media (max-width: 960px) {
+    .genre-rowcol {
+      width: 50%; //좁은 화면
+      padding-left: 70px;
+      padding-right: 70px;
+      margin-top: 60px;
+    }
+  }
+  @media (min-width: 961px) {
+    .genre-rowcol {
+      width: 25%; //넓은 화면
+      padding-left: 200px;
+      padding-right: 70px;
+      margin-top: 60px;
+    }
   }
   .poster-row {
     padding-left: 70px;
@@ -180,5 +225,6 @@
   .button-col {
     padding-left: 80px;
     padding-right: 80px;
+    padding-top: 60px;
   }
   </style>
