@@ -50,7 +50,7 @@
       <v-row>
         <v-col class="button-col">
           <v-btn 
-            @click="completeSelection" 
+            @click="goToMovieFeed" 
             color="gray"
             block
             large  
@@ -65,6 +65,8 @@
   
   <script>
   import { genres } from '@/data/genres';
+  import router from '@/router/index';
+  //import { useRouter, useRoute } from 'vue-router';
   export default {
     name: 'Init_movie',
     data() {
@@ -79,6 +81,22 @@
         return this.selectedMovies.slice(-3);
       },
     },
+    /*
+    setup(){
+      console.log('App setup');
+        const router = useRouter(); 
+        const route = useRoute(); 
+        const goToMovieFeed = () => {
+        console.log("완료 버튼 클릭됨");
+        router.push('/');
+      };
+      const isChoiceRoute = computed(() => route.path === '/');
+      return {
+       goToMovieFeed, //이벤트 연결
+       isChoiceRoute,
+      };
+    },
+    */
     methods: {
     toggleSelection(movie) {
       const index = this.selectedMovies.findIndex(m => m.title === movie.title);
@@ -94,8 +112,13 @@
       isMovieSelected(movie) {
         return this.selectedMovies.some(m => m === movie); // 선택 여부 확인
       },
-      completeSelection() {
-        console.log("Selection completed:", this.selectedMovies); // 완료 이벤트 처리
+      goToMovieFeed() {
+        if (router) {
+          router.push({ path: '/' });
+          console.log("완료 버튼 눌림");
+        } else {
+          console.error("Router instance is undefined"); 
+        }
       },
     },
   };
@@ -149,6 +172,7 @@
     background-color: rgba(0, 0, 0, 0.4);
   }
   .complete-btn {
+    cursor: pointer;
     display: block;
     text-align: center;
     padding: 10px; 

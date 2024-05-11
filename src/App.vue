@@ -144,7 +144,6 @@ ul {
   margin-right: 250px;
 }
 .goto_choice_btn {
-    text-align: center;
     color: black;
     display: block;
     text-align: center;
