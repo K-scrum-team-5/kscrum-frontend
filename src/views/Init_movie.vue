@@ -1,49 +1,49 @@
 <template>
-    <v-container fluid no-gutters>
-      <div class="init-movie">
-        <h1>영화 초기 선택</h1>
-        <p>평소 취향의 영화를 선택하십시오</p>
-      </div>
+  <v-container fluid no-gutters>
+    <div class="init-movie">
+      <h1>영화 초기 선택</h1>
+      <p>평소 취향의 영화를 선택하십시오</p>
+    </div>
 
-      <div class="fix-poster">
-        <v-card 
-          v-for="(movie, index) in recentSelectedMovies" 
-          :key="movie.title" 
-          :style="{ left: `${index * 30}px` }"
-          class="stack-poster"
+    <div class="fix-poster">
+      <v-card 
+        v-for="(movieList, index) in recentSelectedMovies" 
+        :key="movieList.original_title" 
+        :style="{ left: `${index * 30}px` }"
+        class="stack-poster"
+      >
+        <v-img
+          :src="movieList.url"
+          aspect-ratio="0.66"
+          contain
+          width="80px"
         >
-          <v-img
-            :src="movie.posterUrl"
-            aspect-ratio="0.66"
-            contain
-            width="80px"
-          >
-          </v-img>
-        </v-card>
-      </div>
+        </v-img>
+      </v-card>
+    </div>
 
-      <div v-for="genre in genres" :key="genre.name">
+    <div v-for="genre in genres" :key="genre.genre">
         <v-row>
           <v-col class="genre-rowcol">
-            <h2>{{ genre.name }}
-              <v-btn @click="get_genre_random(genre)"> 초기화 </v-btn>
+            <h2>{{ genre.genre }}
+              <v-btn @click="refresh(genre.genre)"> 초기화 </v-btn>
             </h2>
           </v-col>
         </v-row>
 
         <v-row class="poster-row" justify="center">
-          <v-col v-for="movie in genre.random_movies" :key="movie.title" cols="6" md="2">
+          <v-col v-for="movie in genre.movieList" :key="movie.original_title" cols="6" md="2">
             <v-card 
               @click="toggleSelection(movie)" 
               :class="isMovieSelected(movie) ? 'selected' : ''"
               >
               <v-img 
-                :src="movie.posterUrl" 
+                :src="movie.url" 
                 aspect-ratio="0.66"
                 contain
                 class="centered-img"
               />
-              <v-card-title>{{ movie.title }}</v-card-title>
+              <v-card-title>{{ movie.original_title }}</v-card-title>
             </v-card>
           </v-col>
         </v-row>
@@ -52,7 +52,7 @@
       <v-row>
         <v-col class="button-col">
           <v-btn 
-            @click="goToMovieFeed" 
+            @click="postDatas" 
             color="gray"
             block
             large  
@@ -64,48 +64,34 @@
       </v-row>
     </v-container>
   </template>
-  
+
   <script>
-  import { genres } from '@/data/genres';
+  import axios from 'axios';
   import router from '@/router/index';
-  //import { useRouter, useRoute } from 'vue-router';
+
   export default {
     name: 'Init_movie',
     data() {
         return {
-            genres,
+            genres: [],
             selectedMovies: [],
-            selectedPosterUrl: ''
+            selectedPosterUrl: '',
         };
     },
+
     computed: {
       recentSelectedMovies() {
         return this.selectedMovies.slice(-3);
       },
     },
-    /*
-    setup(){
-      console.log('App setup');
-        const router = useRouter(); 
-        const route = useRoute(); 
-        const goToMovieFeed = () => {
-        console.log("button clicked(/)");
-        router.push('/');
-      };
-      const isChoiceRoute = computed(() => route.path === '/');
-      return {
-       goToMovieFeed, //이벤트 연결
-       isChoiceRoute,
-      };
-    },
-    */
+
     methods: {
       toggleSelection(movie) {
-        const index = this.selectedMovies.findIndex(m => m.title === movie.title);
+        const index = this.selectedMovies.findIndex(m => m.original_title === movie.original_title);
         if (index === -1) {
         // 선택되지 않았다면 추가
           this.selectedMovies.push(movie);
-          this.selectedPosterUrl = movie.posterUrl;
+          this.selectedPosterUrl = movie.url;
         } else {
         // 선택되었다면 제거
           this.selectedMovies.splice(index, 1);
@@ -122,38 +108,59 @@
           console.error("Router instance is undefined"); 
         }
       },
-      get_random() {
-        this.genres.forEach(genre => {
-          const genremovies_num = genre.movies.length;
-          const movie_num = Math.min(genremovies_num, 4);
-          const random_movies = [];
-          const randomIdx = this.random([...Array(genremovies_num).keys()]);
-          for(let i = 0; i<movie_num; i++){
-            random_movies.push(genre.movies[randomIdx[i]]);
-          }
-          genre.random_movies = random_movies;
-        });
-      },
-      get_genre_random(genre) {
-        const genremovies_num = genre.movies.length;
-        const movie_num = Math.min(genremovies_num, 4);
-        const random_movies = [];
-        const randomIdx = this.random([...Array(genremovies_num).keys()]);
-        for(let i = 0; i<movie_num; i++){
-          random_movies.push(genre.movies[randomIdx[i]]);
+      async refresh(genre_name) {
+        try {
+          const index = this.genres.findIndex(genre => genre.genre === genre_name);
+          if(index !== -1) this.genres.splice(index,1);
+          this.genres.movieList  = [];
+          
+          const config = { base_Url: 'http://49.50.174.94:8080/api/movie/choice/genre?genre='};
+          const response = await axios.get(config.base_Url + encodeURIComponent(genre_name));
+          this.genres.push(response.data);
+
+          console.log('Data refresh: ', genre_name);
+          console.log('refresh: ', response.data);
+        } catch (error) {
+          console.error('Error_refresh:', error);
         }
-        genre.random_movies = random_movies;
       },
-      random(array){ //Fisher-Yates shuffle
-        for(let i = array.length-1; i>0; i--){
-          const j = Math.floor(Math.random()*(i+1));
-          [array[i], array[j]] = [array[j], array[i]];
+      async fetchDatas() {
+        try {
+          const config = { base_Url: 'http://49.50.174.94:8080/api/movie/choice/genre?genre='}
+          const genre_name = ['Drama', 'Thriller', 'Action', 'Animation', 'Romance', 'Comedy'];
+          const genrePromises = genre_name.map(genre_name =>
+            axios.get(config.base_Url + genre_name)
+          );
+          const response = await Promise.all(genrePromises);
+          response.forEach(response => {
+            this.genres.push(response.data);
+          });
+          console.log('fetch Datas');
+          console.log('fetch: ', this.genres);
+        } catch (error) {
+          console.error('Error fetching Datas:', error);
         }
-        return array;
+      },
+      async postDatas() {
+        try {
+          const selectedMoviesData = this.selectedMovies.map(movie => movie.id);
+          const postData = { movieIds: selectedMoviesData };
+          const response = await axios.post('http://49.50.174.94:8080/api/movie/choice', postData);
+          
+          console.log('POST success', response.data);
+          
+          this.selectedMovies = [];
+          this.selectedPosterUrl = '';
+
+          this.goToMovieFeed();
+        } catch (error) {
+          console.error('POST error', error);
+        }
       },
     },
-    mounted() {
-      this.get_random();
+    
+    mounted() { 
+      this.fetchDatas();
     },
   };
   </script>
