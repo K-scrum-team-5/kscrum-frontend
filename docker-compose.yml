@@ -1,9 +1,11 @@
 version: '3.8'
 services:
   vue-app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile.Frontend
     ports:
-      - "8083:8083"
+      - "9000:9000"
     volumes:
       - .:/app
       - /app/node_modules
