@@ -23,6 +23,12 @@
           <span>Explore</span>
         </span>
       </button>
+      <button @click="goto_choice">
+        <span>
+          <i class="uil uil"></i> <!--이 부분 일단 남겨둔거에요-->
+          <span>영화취향설정</span>
+        </span>
+      </button>
       <button>
         <span>
           <i class="uil uil-bars"></i>
@@ -44,10 +50,17 @@ export default {
       router.push('/');
     };
 
+    const goto_choice = () => {
+      console.log("button clicked(/choice)");
+      router.push('/choice');
+    };
+    
     return {
       goToHome,
+      goto_choice,
     };
   },
+  
 };
 </script>
 

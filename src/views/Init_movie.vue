@@ -1,9 +1,9 @@
 <template>
-    <fluid no-gutters class="init-movie-container">
-      <div class="init-movie">
-        <h1>영화 초기 선택</h1>
-        <p>평소 취향의 영화를 선택하십시오</p>
-      </div>
+  <v-container fluid no-gutters>
+    <div class="init-movie">
+      <h1>영화 취향 선택</h1>
+      <p>평소 취향의 영화를 선택하십시오</p>
+    </div>
 
     <div class="fix-poster">
       <v-card 
@@ -26,7 +26,7 @@
         <v-row>
           <v-col class="genre-rowcol">
             <h2>{{ genre.genre }}
-              <v-btn @click="refresh(genre.genre)"> 초기화 </v-btn>
+              <v-btn @click="refresh(genre.genre)" class="font_size"> 초기화 </v-btn>
             </h2>
           </v-col>
         </v-row>
@@ -43,7 +43,7 @@
                 contain
                 class="centered-img"
               />
-              <v-card-title>{{ movie.original_title }}</v-card-title>
+              <v-card-title class="font_size">{{ movie.original_title }}</v-card-title>
             </v-card>
           </v-col>
         </v-row>
@@ -62,7 +62,7 @@
           </v-btn>
         </v-col>
       </v-row>
-    </fluid>
+    </v-container>
   </template>
 
   <script>
@@ -170,6 +170,7 @@
     margin: 0;
   }
  .init-movie {
+    font-size: medium;
     color: gray; 
     background-color: white; 
     text-align: center;
@@ -203,6 +204,7 @@
       padding-left: 70px;
       padding-right: 70px;
       margin-top: 60px;
+      font-size: medium;
     }
   }
   @media (min-width: 961px) {
@@ -211,6 +213,7 @@
       padding-left: 200px;
       padding-right: 70px;
       margin-top: 60px;
+      font-size: medium;
     }
   }
   .poster-row {
@@ -227,6 +230,7 @@
     background-color: rgba(0, 0, 0, 0.4);
   }
   .complete-btn {
+    font-size: medium;
     cursor: pointer;
     display: block;
     text-align: center;
@@ -236,5 +240,8 @@
     padding-left: 80px;
     padding-right: 80px;
     padding-top: 60px;
+  }
+  .font_size {
+    font-size: medium; 
   }
   </style>
