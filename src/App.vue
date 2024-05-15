@@ -3,11 +3,6 @@
     <v-main>
       <router-view/>
       <template v-if="!isChoiceRoute">
-        <v-container style="width: 470px;">
-          <v-btn block large class="goto_choice_btn" @click="goto_choice">
-            영화초기선택
-          </v-btn>
-        </v-container>
         <div style="display: flex; justify-content: center;">
           <div style="width: 470px;">
             <StoryProfiles @open-genre="openGenre" />
@@ -50,11 +45,6 @@ export default {
     const router = useRouter();
     const route = useRoute();
 
-    const goto_choice = () => {
-      console.log("버튼 클릭됨");
-      router.push('/choice');
-    };
-
     const isChoiceRoute = computed(() => route.path === '/choice');
 
     const openGenre = (genreName) => {
@@ -62,7 +52,6 @@ export default {
     };
 
     return {
-      goto_choice,
       isChoiceRoute,
       openGenre,
     };
@@ -146,18 +135,6 @@ ul {
 .main-content {
   flex: 1;
   margin-right: 250px;
-}
-.goto_choice_btn {
-    text-align: center;
-    color: black;
-    display: block;
-    text-align: center;
-    cursor: pointer;
-    padding: 10px; 
-    border-radius: 5px;
-    background-color: white;
-    border: 2px solid gray;
-    color: gray;
 }
 .v-btn {
   text-transform: none;
