@@ -138,6 +138,7 @@ export default {
   max-width: 90%;
   max-height: 90%;
   display: flex;
+  justify-content: center;
 }
 
 .modal-content img {
@@ -169,4 +170,5 @@ export default {
   font-size: 12px;
   color: grey;
 }
+
 </style>

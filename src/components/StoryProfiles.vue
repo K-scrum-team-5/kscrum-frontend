@@ -1,31 +1,44 @@
 <template>
-    <div class="stories" ref="storiesContainer" @wheel="onScroll">
-      <div v-for="profile in profiles" :key="profile.username" class="story" @click="openStory(profile)">
-        <img :src="profile.username" :alt="profile.username">
-        <span>{{ profile.username }}</span>
-      </div>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'StoryProfiles',
-    data() {
-      return {
-        profiles: [
-          { username: 'Action' },
-          { username: 'jun._pil', image: 'jun._pil.jpg' },
-          { username: 'yul._99', image: 'yul._99.jpg' },
-          { username: 'yul._99', image: 'yul._99.jpg' },
-          { username: 'yul._99', image: 'yul._99.jpg' },
-          { username: 'yul._99', image: 'yul._99.jpg' },          
-        ],
-        scrollSpeed: 2,
+  <div class="stories" ref="storiesContainer" @wheel="onScroll">
+    <div v-for="(genre, index) in genres" :key="genre.name" class="story" @click="openGenre(genre)">
+  <img :src="`https://picsum.photos/100?random=${index}`" />
+  <span>{{ genre.name }}</span>
+</div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'StoryProfiles',
+  data() {
+    return {
+      genres: [
+        { name: 'Action'},
+        { name: 'Romance'},
+        { name: 'Sci-Fi'},
+        { name: 'Drama'},
+        { name: 'Comedy'},
+        { name: 'Horror'},
+        { name: 'Thriller'},
+        { name: 'Fantasy'},
+        { name: 'Mystery'},
+        { name: 'Crime'},
+        { name: 'Adventure'},
+        { name: 'Animation'},
+        { name: 'Family'},
+        { name: 'War'},
+        { name: 'History'},
+        { name: 'Music'},
+        { name: 'Documentary'},
+        { name: 'Western'},
+        { name: 'TV Movie'},
+      ],
+      scrollSpeed: 2,
     };
   },
   methods: {
-    openStory(profile) {
-      console.log(`Opening story for ${profile.username}`);
+    openGenre(genre) {
+      this.$emit('open-genre', genre.name);
     },
     onScroll(event) {
       event.preventDefault();

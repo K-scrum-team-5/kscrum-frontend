@@ -2,9 +2,9 @@
     <aside class="right-sidebar">
       <h3>LIKE List</h3>
         <ul>
-            <li v-for="post in likedPosts" :key="post" style="border: 5px ridge; position: relative;">{{ post }}
+            <!-- <li v-for="post in likedPosts" :key="post" style="border: 5px ridge; position: relative;">{{ post }}
                 <button style="position: absolute; top: 0; right: 0; background-color: transparent;border: none;">취소</button>
-            </li>
+            </li> -->
         </ul>
     </aside>
   </template>

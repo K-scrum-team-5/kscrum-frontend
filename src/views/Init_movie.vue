@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid no-gutters>
+    <fluid no-gutters class="init-movie-container">
       <div class="init-movie">
         <h1>영화 초기 선택</h1>
         <p>평소 취향의 영화를 선택하십시오</p>
@@ -62,7 +62,7 @@
           </v-btn>
         </v-col>
       </v-row>
-    </v-container>
+    </fluid>
   </template>
   
   <script>
@@ -159,6 +159,9 @@
   </script>
   
   <style lang="scss">
+  .body {
+    margin: 0;
+  }
  .init-movie {
     color: gray; 
     background-color: white; 

@@ -1,31 +1,26 @@
 <template>
   <v-app>
     <v-main>
-      <router-view/>  <!--/choice-->
-      <template v-if="!isChoiceRoute"> 
-        <v-container>
-          <v-btn 
-            block
-            large
-            class = "goto_choice_btn"
-            @click="goto_choice">
+      <router-view/>
+      <template v-if="!isChoiceRoute">
+        <v-container style="width: 470px;">
+          <v-btn block large class="goto_choice_btn" @click="goto_choice">
             영화초기선택
           </v-btn>
         </v-container>
-
-        <div>
-          <!-- <StoryBar_Page/> -->
-          <StoryProfiles/>
-          <SideBar_Page/>
-          <Container_Page :movies="movies"/> <!-- ':movies' 대신 원래 'develop'에 있던 ':인스타데이터' 사용을 고려 -->
-          <div class="footer"></div>
-          <RightSideBar />
+        <div style="display: flex; justify-content: center;">
+          <div style="width: 470px;">
+            <StoryProfiles @open-genre="openGenre" />
+            <SideBar_Page/>
+            <Container_Page :movies="movies"/>
+            <div class="footer"></div>
+            <RightSideBar />
+          </div>
         </div>
       </template>
     </v-main>
   </v-app>
 </template>
-
 <script>
 import axios from 'axios';
 import { computed } from 'vue';
@@ -39,10 +34,10 @@ import RightSideBar from './components/RightSideBar.vue';
 
 export default {
   name: 'App',
-  data(){
-    return{
+  data() {
+    return {
       movies: [],
-    }
+    };
   },
   components: {
     Container_Page,
@@ -52,30 +47,38 @@ export default {
   },
   setup() {
     console.log('App setup');
-    const router = useRouter(); 
-    const route = useRoute(); 
-    const goto_choice = () => { // 경로 이동
-      console.log("button clicked(/choice)");
+    const router = useRouter();
+    const route = useRoute();
+
+    const goto_choice = () => {
+      console.log("버튼 클릭됨");
       router.push('/choice');
     };
+
     const isChoiceRoute = computed(() => route.path === '/choice');
+
+    const openGenre = (genreName) => {
+      router.push({ name: 'genre_profile', params: { genreName } });
+    };
+
     return {
-      goto_choice, //이벤트 연결
+      goto_choice,
       isChoiceRoute,
+      openGenre,
     };
   },
   mounted() {
     console.log('App mounted');
     axios.get('http://49.50.174.94:8080/api/movie/posters?page=2&size=8')
-        .then(response => {
-          this.movies = response.data;
-          console.log(response.data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-  }
-}
+      .then(response => {
+        this.movies = response.data;
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+};
 </script>
 
 <style>
@@ -85,6 +88,7 @@ body {
 ul {
   padding: 5px;
   list-style-type: none;
+  
 }
 .header {
   width: 100%;
@@ -144,6 +148,7 @@ ul {
   margin-right: 250px;
 }
 .goto_choice_btn {
+    text-align: center;
     color: black;
     display: block;
     text-align: center;
@@ -165,10 +170,10 @@ ul {
   font-family: 'consolas';
   margin-top: 60px;
   width: 100%;
-  max-width: 460px;
   margin: auto;
   position: relative;
   border-right: 1px solid #eee;
   border-left: 1px solid #eee;
+  align-content: center;
 }
 </style>
