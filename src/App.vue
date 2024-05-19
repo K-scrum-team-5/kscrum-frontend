@@ -1,21 +1,30 @@
 <template>
   <v-app>
     <v-main>
-      <router-view/>
-      <template v-if="!isChoiceRoute">
-        <div style="display: flex; justify-content: center;">
-          <div style="width: 470px;">
-            <StoryProfiles @open-genre="openGenre" />
-            <SideBar_Page/>
-            <Container_Page :movies="movies"/>
-            <div class="footer"></div>
-            <RightSideBar />
+      <template v-if="isExploreRoute">
+        <v-navigation-drawer app>
+          <SideBar_Page />
+        </v-navigation-drawer>
+        <ExplorePage />
+      </template>
+      <template v-else>
+        <router-view/>
+        <template v-if="!isChoiceRoute">
+          <div style="display: flex; justify-content: center;">
+            <div style="width: 470px;">
+              <StoryProfiles @open-genre="openGenre" />
+              <SideBar_Page/>
+              <Container_Page :movies="movies"/>
+              <div class="footer"></div>
+              <RightSideBar />
+            </div>
           </div>
-        </div>
+        </template>
       </template>
     </v-main>
   </v-app>
 </template>
+
 <script>
 import axios from 'axios';
 import { computed } from 'vue';
@@ -25,6 +34,7 @@ import Container_Page from './components/Container_Page.vue';
 import SideBar_Page from './components/SideBar_Page.vue';
 import StoryProfiles from './components/StoryProfiles.vue';
 import RightSideBar from './components/RightSideBar.vue';
+import ExplorePage from './components/Explore.vue';
 
 
 export default {
@@ -39,6 +49,7 @@ export default {
     SideBar_Page,
     StoryProfiles,
     RightSideBar,
+    ExplorePage
   },
   setup() {
     console.log('App setup');
@@ -46,7 +57,7 @@ export default {
     const route = useRoute();
 
     const isChoiceRoute = computed(() => route.path === '/choice');
-
+    const isExploreRoute = computed(() => route.path === '/explore');
     const openGenre = (genreName) => {
       router.push({ name: 'genre_profile', params: { genreName } });
     };
@@ -54,6 +65,8 @@ export default {
     return {
       isChoiceRoute,
       openGenre,
+      isExploreRoute,
+
     };
   },
   mounted() {
