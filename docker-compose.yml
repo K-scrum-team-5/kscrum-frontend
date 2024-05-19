@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   vue-app:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.Frontend
     ports:
@@ -11,3 +11,4 @@ services:
       - /app/node_modules
     environment:
       - NODE_ENV=development
+      - VUE_APP_YOUTUBE_API_KEY=${VUE_APP_YOUTUBE_API_KEY}
