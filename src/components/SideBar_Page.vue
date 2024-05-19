@@ -17,7 +17,7 @@
           <span>Search</span>
         </span>
       </button>
-      <button>
+      <button @click="goToExplore"> <!-- Explore 버튼에 클릭 이벤트 추가 -->
         <span>
           <i class="uil uil-compass"></i>
           <span>Explore</span>
@@ -54,10 +54,15 @@ export default {
       console.log("button clicked(/choice)");
       router.push('/choice');
     };
+
+    const goToExplore = () => {
+      router.push('/explore'); // Explore 페이지로 라우팅
+    };
     
     return {
       goToHome,
       goto_choice,
+      goToExplore,
     };
   },
   

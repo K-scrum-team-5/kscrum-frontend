@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Init_movie from '@/views/Init_movie.vue';
 import GenreProfile from '@/components/GenreProfile.vue';
+import Explore from '@/components/Explore.vue'; // Explore 페이지 추가
 
 
 // 라우터 경로 정의
@@ -10,6 +11,11 @@ const routes = [
       path: '/genre/:genreName',
       name: 'genre_profile',
       component: GenreProfile,
+    },
+    {
+        path: '/explore',
+        name: 'explore',
+        component: Explore, // Explore 경로 추가
     },
 
   ];
