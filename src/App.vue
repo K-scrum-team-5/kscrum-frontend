@@ -7,6 +7,12 @@
         <div class="footer"></div>
         <RightSideBar />
       </template>
+      <template v-else-if="isOpenGenre">
+        <SideBar_Page />
+        <GenreProfile />
+        <div class="footer"></div>
+        <RightSideBar />
+      </template>
       <template v-else>
         <router-view/>
         <template v-if="!isChoiceRoute">
@@ -37,6 +43,7 @@ import StoryProfiles from './components/StoryProfiles.vue';
 import RightSideBar from './components/RightSideBar.vue';
 import ExplorePage from './components/Explore.vue';
 import InfiniteLoading from 'vue-infinite-loading';
+import GenreProfile from './components/GenreProfile';
 
 export default {
   name: 'App',
@@ -53,6 +60,7 @@ export default {
     RightSideBar,
     ExplorePage,
     InfiniteLoading,
+    GenreProfile,
   },
   setup() {
     console.log('App setup');
@@ -61,6 +69,7 @@ export default {
 
     const isChoiceRoute = computed(() => route.path === '/choice');
     const isExploreRoute = computed(() => route.path === '/explore');
+    const isOpenGenre = computed(() => route.path.startsWith('/genre'));
     const openGenre = (genreName) => {
       router.push({ name: 'genre_profile', params: { genreName } });
     };
@@ -69,6 +78,7 @@ export default {
       isChoiceRoute,
       openGenre,
       isExploreRoute,
+      isOpenGenre,
 
     };
   },
