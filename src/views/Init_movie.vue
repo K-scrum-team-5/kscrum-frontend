@@ -1,6 +1,6 @@
 <template>
-  <v-container fluid no-gutters>
-    <div class="init-movie">
+  <v-container fluid no-gutters :class="{ 'dark-mode': $root.isDarkMode }">
+    <div class="init-movie" :class="{ 'dark-mode': $root.isDarkMode }">
       <h1>영화 취향 선택</h1>
       <p>평소 취향의 영화를 선택하십시오</p>
     </div>
@@ -23,13 +23,13 @@
     </div>
 
     <div v-for="genre in genres" :key="genre.genre">
-        <v-row>
-          <v-col class="genre-rowcol">
-            <h2>{{ genre.genre }}
-              <v-btn @click="refresh(genre.genre)" class="font_size"> 초기화 </v-btn>
-            </h2>
-          </v-col>
-        </v-row>
+      <v-row>
+        <v-col class="genre-rowcol">
+          <h2>{{ genre.genre }}
+            <v-btn @click="refresh(genre.genre)" class="font_size" :class="{ 'dark-mode': $root.isDarkMode }"> 초기화 </v-btn>
+          </h2>
+        </v-col>
+      </v-row>
 
         <v-row class="poster-row" justify="center">
           <v-col v-for="movie in genre.movieList" :key="movie.original_title" cols="6" md="2">
@@ -169,13 +169,24 @@
   .body {
     margin: 0;
   }
- .init-movie {
-    font-size: medium;
-    color: gray; 
-    background-color: white; 
-    text-align: center;
-    padding: 10px;
+  .init-movie {
+  font-size: medium;
+  color: gray;
+  background-color: white;
+  text-align: center;
+  padding: 10px;
+
+  &.dark-mode {
+    background-color: #333333;
+    color: #cccccc;
   }
+}
+
+  .v-btn.dark-mode {
+  background-color: #555555;
+  color: #ffffff;
+  }
+
   .v-img {
     width: 100%;
     height: auto; 
@@ -244,4 +255,23 @@
   .font_size {
     font-size: medium; 
   }
+
+  .dark-mode {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.dark-mode .v-card {
+  background-color: #444444;
+  color: #ffffff;
+}
+
+.dark-mode .v-card-title {
+  color: #ffffff;
+}
+
+.dark-mode .complete-btn {
+  background-color: #555555;
+  color: #ffffff;
+}
   </style>

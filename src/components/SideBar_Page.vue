@@ -1,5 +1,5 @@
 <template>
-  <aside class="sidebar">
+    <aside class="sidebar" :class="{ 'dark-mode': $root.isDarkMode }">
     <header class="sidebar-header">
       <img class="logo-img" src="https://raw.githubusercontent.com/zouraiz523/Instagram-Sidebar-/b2750eba8fa31cde49364428bf28fbb41b3a02f0/Instagram%20Sidebar%20Coding/logo.svg" />
       <i class="logo-icon uil uil-instagram"></i>
@@ -29,6 +29,12 @@
           <span>영화취향설정</span>
         </span>
       </button>
+      <button @click="toggleDarkMode">
+        <span>
+          <i class="uil uil-moon"></i>
+          <span>다크모드</span>
+        </span>
+      </button>
       <button>
         <span>
           <i class="uil uil-bars"></i>
@@ -43,6 +49,12 @@
 import { useRouter } from 'vue-router';
 
 export default {
+
+  methods: {
+    toggleDarkMode() {
+      this.$root.toggleDarkMode();
+    },
+  },
   setup() {
     const router = useRouter();
 
@@ -228,4 +240,19 @@ export default {
   .sidebar > nav button:last-child {
     margin-top: auto;
   }
+
+  .sidebar.dark-mode {
+  background-color: #333333;
+  color: #ffffff;
+  border-right: 1px solid #555555;
+}
+
+.sidebar.dark-mode button:hover > span {
+  background-color: #444444;
+}
+
+.sidebar.dark-mode .logo-img {
+  filter: invert(1);
+}
+  
 </style>

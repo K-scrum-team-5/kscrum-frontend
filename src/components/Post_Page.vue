@@ -1,5 +1,5 @@
 <template>
-  <div class="post" style="border: 5px ridge">
+  <div class="post" :class="{ 'dark-mode': $root.isDarkMode }" style="border: 5px ridge">
     <div class="post-body">
       <img :src="movies.url" alt="Post Image" @click="openModal">
     </div>
@@ -11,13 +11,12 @@
       <p class="date">{{ movies.id }}</p>
     </div>
 
-    <div v-if="showModal" class="modal" @click="closeModal">
-      <div class="modal-content">
+    <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
+      <div class="modal-content" :class="{ 'dark-mode': $root.isDarkMode }">
         <img :src="movies.url" alt="Post Image">
-        <div class="modal-info">
+        <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
           <h3>{{ movies.original_title }}</h3>
-          <!-- <p>{{ 인스타데이터.content }}</p> -->
-          <p class="date">{{ movies.id }}</p>          
+          <p class="date">{{ movies.id }}</p>
         </div>
       </div>
     </div>
@@ -171,4 +170,24 @@ export default {
   color: grey;
 }
 
+.post.dark-mode {
+  border-color: #555555;
+}
+
+.modal.dark-mode {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content.dark-mode {
+  background-color: #333333;
+}
+
+.modal-info.dark-mode {
+  background-color: #444444;
+  color: #ffffff;
+}
+
+.modal-info.dark-mode .date {
+  color: #cccccc;
+}
 </style>

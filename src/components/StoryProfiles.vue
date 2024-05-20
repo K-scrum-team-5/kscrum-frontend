@@ -1,9 +1,9 @@
 <template>
-  <div class="stories" ref="storiesContainer" @wheel="onScroll">
+  <div class="stories" ref="storiesContainer" @wheel="onScroll" :class="{ 'dark-mode': $root.isDarkMode }">
     <div v-for="(genre, index) in genres" :key="genre.name" class="story" @click="openGenre(genre)">
-  <img :src="`https://picsum.photos/100?random=${index}`" />
-  <span>{{ genre.name }}</span>
-</div>
+      <img :src="`https://picsum.photos/100?random=${index}`" />
+      <span>{{ genre.name }}</span>
+    </div>
   </div>
 </template>
 
@@ -90,5 +90,13 @@ export default {
 .stories {
   -ms-overflow-style: none; 
   scrollbar-width: none; 
+}
+
+.stories.dark-mode {
+  background-color: #333333;
+}
+
+.stories.dark-mode .story > span {
+  color: #ffffff;
 }
   </style>

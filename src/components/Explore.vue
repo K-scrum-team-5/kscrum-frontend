@@ -8,8 +8,8 @@
 
     <InfiniteLoading @infinite="loadMore" ref="infiniteLoading"/>
 
-    <div v-if="showModal" class="modal" @click="closeModal">
-      <div class="modal-content" @click.stop>
+    <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
+    <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
         <div class="modal-video-info">
           <div class="youtube-video-wrapper" v-if="trailerUrl">
             <iframe
@@ -23,7 +23,7 @@
           <div class="poster-wrapper" v-else>
             <img v-if="selectedMovie" :src="'http://image.tmdb.org/t/p/w500' + selectedMovie.poster_path" alt="Post Image" class="poster-image">
           </div>
-          <div class="modal-info">
+          <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
             <h3>{{ selectedMovie?.title }}</h3>
             <p>{{ selectedMovie?.overview }}</p>
             <p><strong>Popularity:</strong> {{ selectedMovie?.popularity }}</p>
@@ -214,6 +214,33 @@ export default {
 .error {
   color: red;
   font-weight: bold;
+}
+
+.dark-mode {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+.modal.dark-mode {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content.dark-mode {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.modal-info.dark-mode {
+  background-color: #444444;
+  color: #ffffff;
+}
+
+.modal-info.dark-mode .date {
+  color: #cccccc;
+}
+
+.error {
+  color: #ff5555;
 }
 
 </style>

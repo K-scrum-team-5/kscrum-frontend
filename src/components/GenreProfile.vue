@@ -21,13 +21,12 @@
       </div>
       <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
     </div>
-    <div v-if="showModal" class="modal" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <img :src="selectedMovie.url" alt="Post Image">
-        <div class="modal-info">
-          <h3>{{ selectedMovie.original_title }}</h3>
-          <p class="date">{{ selectedMovie.id }}</p>
-        </div>
+    <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
+    <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
+      <img :src="selectedMovie.url" alt="Post Image">
+      <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
+        <h3>{{ selectedMovie.original_title }}</h3>
+        <p class="date">{{ selectedMovie.id }}</p>
       </div>
     </div>
   </div>
@@ -68,6 +67,7 @@ export default {
       this.loading = true;
       const url = `http://49.50.174.94:8080/api/movie/genre?page=${this.page}&size=8&genre=${this.genreName}`;
       axios.get(url)
+
           .then(response => {
             if (response.data.length) {
               this.movies = [...this.movies, ...response.data];
@@ -527,6 +527,23 @@ Remove or comment-out the code block below to see how the browser will fall-back
 .modal-info .date {
   font-size: 12px;
   color: grey;
+}
+
+.modal.dark-mode {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content.dark-mode {
+  background-color: #333333;
+}
+
+.modal-info.dark-mode {
+  background-color: #444444;
+  color: #ffffff;
+}
+
+.modal-info.dark-mode .date {
+  color: #cccccc;
 }
 
 </style>

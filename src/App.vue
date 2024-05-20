@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :class="{ 'dark-mode': isDarkMode }">
     <v-main>
       <template v-if="isExploreRoute">
           <SideBar_Page />
@@ -51,6 +51,7 @@ export default {
     return {
       movies: [],
       page: 0, // 페이지 초기화
+      isDarkMode: false,
     };
   },
   components: {
@@ -85,8 +86,14 @@ export default {
   mounted() {
     console.log('App mounted')
     this.fetchMovies();
+    const isDarkMode = localStorage.getItem('isDarkMode') === 'true';
+    this.isDarkMode = isDarkMode;
   },
   methods: {
+    toggleDarkMode() {
+      this.isDarkMode = !this.isDarkMode;
+      localStorage.setItem('isDarkMode', this.isDarkMode);
+    },
     fetchMovies($state) {
       const url = `http://49.50.174.94:8080/api/movie/posters?page=${this.page}&size=8`;
       axios.get(url)
