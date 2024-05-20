@@ -2,10 +2,10 @@
   <v-app>
     <v-main>
       <template v-if="isExploreRoute">
-        <v-navigation-drawer app>
           <SideBar_Page />
-        </v-navigation-drawer>
         <ExplorePage />
+        <div class="footer"></div>
+        <RightSideBar />
       </template>
       <template v-else>
         <router-view/>
@@ -15,6 +15,7 @@
               <StoryProfiles @open-genre="openGenre" />
               <SideBar_Page/>
               <Container_Page :movies="movies"/>
+              <InfiniteLoading @infinite="loadMore" ref="infiniteLoading"/>
               <div class="footer"></div>
               <RightSideBar />
             </div>
@@ -35,13 +36,14 @@ import SideBar_Page from './components/SideBar_Page.vue';
 import StoryProfiles from './components/StoryProfiles.vue';
 import RightSideBar from './components/RightSideBar.vue';
 import ExplorePage from './components/Explore.vue';
-
+import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
   name: 'App',
   data() {
     return {
       movies: [],
+      page: 0, // 페이지 초기화
     };
   },
   components: {
@@ -49,7 +51,8 @@ export default {
     SideBar_Page,
     StoryProfiles,
     RightSideBar,
-    ExplorePage
+    ExplorePage,
+    InfiniteLoading,
   },
   setup() {
     console.log('App setup');
@@ -70,15 +73,36 @@ export default {
     };
   },
   mounted() {
-    console.log('App mounted');
-    axios.get('http://49.50.174.94:8080/api/movie/posters?page=0&size=8')
-      .then(response => {
-        this.movies = response.data;
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    console.log('App mounted')
+    this.fetchMovies();
+  },
+  methods: {
+    fetchMovies($state) {
+      const url = `http://49.50.174.94:8080/api/movie/posters?page=${this.page}&size=8`;
+      axios.get(url)
+          .then(response => {
+            if (response.data.length) {
+              this.movies = [...this.movies, ...response.data];
+              this.page++;
+              if ($state) {
+                $state.loaded();
+              }
+            } else {
+              if ($state) {
+                $state.complete();
+              }
+            }
+          })
+          .catch(error => {
+            console.error(error);
+            if ($state) {
+              $state.complete();
+            }
+          });
+    },
+    loadMore($state) {
+      this.fetchMovies($state);
+    },
   },
 };
 </script>
