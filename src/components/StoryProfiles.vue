@@ -38,7 +38,7 @@ export default {
   },
   methods: {
     openGenre(genre) {
-      this.$emit('open-genre', genre.name);
+      this.$router.push({ name: 'genre_profile', params: { genreName: genre.name } });
     },
     onScroll(event) {
       event.preventDefault();

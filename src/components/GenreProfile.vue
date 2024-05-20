@@ -1,4 +1,5 @@
 <template>
+  <div>
     <div class="container">
       <div class="profile">
         <div class="profile-image">
@@ -8,18 +9,17 @@
           <h1 class="profile-user-name">{{ genreName }}</h1>
           <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
         </div>
-        <div class="profile-stats">
-        </div>
-        <div class="profile-bio">
-        </div>
+        <div class="profile-stats"></div>
+        <div class="profile-bio"></div>
       </div>
     </div>
-    <div class="container" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="10">
+    <div class="container">
       <div class="gallery">
         <div class="gallery-item" tabindex="0" v-for="(movie, index) in movies" :key="index">
           <img :src="movie.url" class="gallery-image" alt="" @click="openModal(movie)">
         </div>
       </div>
+      <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
     </div>
     <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
     <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
@@ -31,68 +31,82 @@
     </div>
   </div>
 </template>
-  
-  <script>
-  import axios from 'axios';
-  import { useRoute } from 'vue-router';
-  
-  export default {
-    setup() {
-      const route = useRoute();
-      const genreName = route.params.genreName;
-  
-      return {
-        genreName,
-      };
-    },
-    data() {
-      return {
-        movies: [],
-        loading: false,
-        busy: false,
-        page: 0,
-        showModal: false,
-        selectedMovie: null,
-      };
-    },
-    mounted() {
-      this.fetchMovies();
-    },
-    methods: {
-      fetchMovies() {
-        this.loading = true;
-        const url = `http://49.50.174.94:8080/api/movie/genre?page=${this.page}&size=8&genre=${this.genreName}`;
-        axios.get(url)
+
+<script>
+import axios from 'axios';
+import { useRoute } from 'vue-router';
+import InfiniteLoading from 'vue-infinite-loading';
+
+export default {
+  components: {
+    InfiniteLoading,
+  },
+  setup() {
+    const route = useRoute();
+    const genreName = route.params.genreName;
+
+    return {
+      genreName,
+    };
+  },
+  data() {
+    return {
+      movies: [],
+      loading: false,
+      busy: false,
+      page: 0,
+      showModal: false,
+      selectedMovie: null,
+    };
+  },
+  mounted() {
+    this.fetchMovies();
+  },
+  methods: {
+    fetchMovies($state) {
+      this.loading = true;
+      const url = `http://49.50.174.94:8080/api/movie/genre?page=${this.page}&size=8&genre=${this.genreName}`;
+      axios.get(url)
+
           .then(response => {
-            this.movies = [...this.movies, ...response.data];
+            if (response.data.length) {
+              this.movies = [...this.movies, ...response.data];
+              this.page++;
+              if ($state) {
+                $state.loaded();
+              }
+            } else {
+              if ($state) {
+                $state.complete();
+              }
+            }
             this.loading = false;
             this.busy = false;
-            this.page++;
           })
           .catch(error => {
             console.error(error);
+            if ($state) {
+              $state.complete();
+            }
             this.loading = false;
             this.busy = false;
           });
-      },
-      loadMore() {
-        this.busy = true;
-        setTimeout(() => {
-          this.fetchMovies();
-        }, 1000);
-      },
-      openModal(movie) {
-        this.showModal = true;
-        this.selectedMovie = movie;
-      },
-      closeModal(event) {
-        if (event.target === event.currentTarget) {
-          this.showModal = false;
-        }
-      },
     },
-  };
-  </script> 
+    loadMore($state) {
+      this.fetchMovies($state);
+    },
+    openModal(movie) {
+      this.showModal = true;
+      this.selectedMovie = movie;
+    },
+    closeModal(event) {
+      if (event.target === event.currentTarget) {
+        this.showModal = false;
+      }
+    },
+  },
+};
+</script>
 
 <style>
 
