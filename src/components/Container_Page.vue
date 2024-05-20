@@ -27,5 +27,10 @@ export default {
 
 <style>
 
+.dark-mode {
+  background-color: #333333;
+  color: #ffffff;
+}
+
 
 </style>

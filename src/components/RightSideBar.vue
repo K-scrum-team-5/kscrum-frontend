@@ -1,5 +1,5 @@
 <template>
-    <aside class="right-sidebar">
+    <aside class="right-sidebar" :class="{ 'dark-mode': isDarkMode }">
       <h3>LIKE List</h3>
         <ul>
             <!-- <li v-for="post in likedPosts" :key="post" style="border: 5px ridge; position: relative;">{{ post }}
@@ -15,10 +15,12 @@
       likedPosts() {
         return this.$root.$data.인스타데이터.filter(post => post.liked).map(post => post.name);
       },
+      isDarkMode() {
+      return this.$root.isDarkMode;
+    },
     },
   };
   </script>
-  
   <style scoped>
   .right-sidebar {
     position: fixed;
@@ -45,5 +47,15 @@
   
   .right-sidebar li {
     margin-bottom: 5px;
+  }
+  
+  /* 다크모드 스타일 */
+  .right-sidebar.dark-mode {
+    background-color: #333333;
+    color: #ffffff;
+  }
+  
+  .right-sidebar.dark-mode h3 {
+    color: #ffffff;
   }
   </style>
