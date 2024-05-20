@@ -179,7 +179,7 @@ export default {
 }
 
 .modal-info {
-  width: 50%;
+  width: 70%;
   padding: 20px;
   display: flex;
   flex-direction: column;
