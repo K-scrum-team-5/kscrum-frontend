@@ -111,15 +111,12 @@
       async refresh(genre_name) {
         try {
           const index = this.genres.findIndex(genre => genre.genre === genre_name);
-          if(index !== -1) this.genres.splice(index,1);
-          this.genres.movieList  = [];
-          
-          const config = { base_Url: 'http://49.50.174.94:8080/api/movie/choice/genre?genre='};
-          const response = await axios.get(config.base_Url + encodeURIComponent(genre_name));
-          this.genres.push(response.data);
-
-          console.log('Data refresh: ', genre_name);
-          console.log('refresh: ', response.data);
+          if(index !== -1) {
+            const config = { base_Url: 'http://49.50.174.94:8080/api/movie/choice/genre?genre='};
+            const response = await axios.get(config.base_Url + encodeURIComponent(genre_name));
+            this.genres[index] = response.data;
+            console.log('refresh: ', genre_name, response.data);
+          }
         } catch (error) {
           console.error('Error_refresh:', error);
         }
