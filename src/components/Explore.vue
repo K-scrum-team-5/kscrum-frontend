@@ -1,5 +1,7 @@
 <template>
+  <div class="top-space"></div>
   <div class="container">
+    <!--천장여백-->
     <div class="gallery">
       <div class="gallery-item" tabindex="0" v-for="(movie, index) in movies" :key="index">
         <img :src="movie.url" class="gallery-image" alt="" @click="openModal(movie.id)">
@@ -25,9 +27,11 @@
           </div>
           <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
             <h3>{{ selectedMovie?.title }}</h3>
-            <p>{{ selectedMovie?.overview }}</p>
-            <p><strong>Popularity:</strong> {{ selectedMovie?.popularity }}</p>
-            <p><strong>Release Date:</strong> {{ selectedMovie?.release_date }}</p>
+            <p>장르{{ selectedMovie?.genreString }}</p>
+            <p class="overview">{{ selectedMovie?.overview }}</p>
+            <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
+            <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
+            <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
             <p v-if="quotaExceeded" class="error">YouTube API quota exceeded. Showing movie poster instead.</p>
           </div>
         </div>
@@ -41,7 +45,7 @@ import axios from 'axios';
 import InfiniteLoading from 'vue-infinite-loading';
 import '@/styles/gallery.css'; // CSS 파일 임포트
 
-const YOUTUBE_API_KEY = process.env.VUE_APP_YOUTUBE_API_KEY;
+//const YOUTUBE_API_KEY = process.env.VUE_APP_YOUTUBE_API_KEY;
 
 export default {
   name: 'ExplorePage',
@@ -81,7 +85,7 @@ export default {
       return axios.get(url);
     },
     fetchYouTubeTrailer(title, releaseDate) {
-      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(title + ' ' + releaseDate.split('-')[0])} trailer&key=${YOUTUBE_API_KEY}`;
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q=${encodeURIComponent(title + ' ' + releaseDate.split('-')[0])} trailer&key='testkey'`//${YOUTUBE_API_KEY}`;
       return axios.get(url);
     },
     loadMore($state) {
@@ -121,11 +125,15 @@ export default {
 
 <style>
 
+.top-space {
+  height: 20px;
+}
+
 .modal {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 50%; /* 너비 조정 */
+  width: 60%; /* 너비 조정 */
   height: auto;
   background-color: rgba(0, 0, 0, 0.8);
   display: flex;
@@ -137,8 +145,8 @@ export default {
 }
 
 .modal-content {
-  width: 60%;
-  height: 50%;
+  width: 80%;
+  height: 70%;
   background-color: white;
   padding: 20px;
   display: flex;
@@ -193,6 +201,14 @@ export default {
   height: auto;
   object-fit: contain;
   margin-bottom: 20px;
+}
+
+.modal-info .overview {
+  display: -webkit-box;
+  -webkit-line-clamp: 10; /* 원하는 줄 수로 설정 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .modal-info h3 {
