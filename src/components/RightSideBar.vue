@@ -26,7 +26,7 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 250px;
+    width: 40rem;
     height: 100%;
     padding: 40px 10px 30px 10px;
     background: #ffffff;
@@ -35,9 +35,10 @@
   }
   
   .right-sidebar h3 {
-    font-size: 18px;
+    font-size: 3rem;
     font-weight: bold;
     margin-bottom: 10px;
+    align-content: center;
   }
   
   .right-sidebar ul {
