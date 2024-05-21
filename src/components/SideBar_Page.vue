@@ -47,7 +47,8 @@
 
 <script>
 import { useRouter } from 'vue-router';
-import '@/styles/sideBar.css';
+import '@/styles/sidebar.css';
+
 
 export default {
 
