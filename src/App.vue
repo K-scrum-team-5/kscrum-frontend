@@ -2,28 +2,28 @@
   <v-app :class="{ 'dark-mode': isDarkMode }">
     <v-main>
       <template v-if="isExploreRoute">
-          <SideBar_Page />
-        <ExplorePage />
+        <SideBar_Page />
+        <ExplorePage ref="explorePage" :likedMovies="likedMovies" @toggle-like="toggleLike" />
         <div class="footer"></div>
-        <RightSideBar />
+        <RightSideBar :likedMovies="likedMovies" @open-modal="openModal" />
       </template>
       <template v-else-if="isOpenGenre">
         <SideBar_Page />
         <GenreProfile />
         <div class="footer"></div>
-        <RightSideBar />
+        <RightSideBar :likedMovies="likedMovies" @open-modal="openModal" />
       </template>
       <template v-else>
-        <router-view/>
+        <router-view />
         <template v-if="!isChoiceRoute">
           <div style="display: flex; justify-content: center;">
             <div style="width: 470px;">
               <StoryProfiles @open-genre="openGenre" />
-              <SideBar_Page/>
-              <Container_Page :movies="movies"/>
-              <InfiniteLoading @infinite="loadMore" ref="infiniteLoading"/>
+              <SideBar_Page />
+              <Container_Page :movies="movies" />
+              <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
               <div class="footer"></div>
-              <RightSideBar />
+              <RightSideBar :likedMovies="likedMovies" @open-modal="openModal" />
             </div>
           </div>
         </template>
@@ -36,7 +36,6 @@
 import axios from 'axios';
 import { computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-//import instaData from './assets/instaData';
 import Container_Page from './components/Container_Page.vue';
 import SideBar_Page from './components/SideBar_Page.vue';
 import StoryProfiles from './components/StoryProfiles.vue';
@@ -50,8 +49,9 @@ export default {
   data() {
     return {
       movies: [],
-      page: 0, // 페이지 초기화
+      page: 0,
       isDarkMode: false,
+      likedMovies: [],
     };
   },
   components: {
@@ -64,7 +64,6 @@ export default {
     GenreProfile,
   },
   setup() {
-    console.log('App setup');
     const router = useRouter();
     const route = useRoute();
 
@@ -80,11 +79,9 @@ export default {
       openGenre,
       isExploreRoute,
       isOpenGenre,
-
     };
   },
   mounted() {
-    console.log('App mounted')
     this.fetchMovies();
     const isDarkMode = localStorage.getItem('isDarkMode') === 'true';
     this.isDarkMode = isDarkMode;
@@ -96,31 +93,43 @@ export default {
     },
     fetchMovies($state) {
       const url = `http://49.50.174.94:8080/api/movie/posters?page=${this.page}&size=8`;
-      axios.get(url)
-          .then(response => {
-            if (response.data.length) {
-              this.movies = [...this.movies, ...response.data];
-              this.page++;
-              if ($state) {
-                $state.loaded();
-              }
-            } else {
-              if ($state) {
-                $state.complete();
-              }
+      axios
+        .get(url)
+        .then((response) => {
+          if (response.data.length) {
+            this.movies = [...this.movies, ...response.data];
+            this.page++;
+            if ($state) {
+              $state.loaded();
             }
-          })
-          .catch(error => {
-            console.error(error);
+          } else {
             if ($state) {
               $state.complete();
             }
-          });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          if ($state) {
+            $state.complete();
+          }
+        });
     },
     loadMore($state) {
       this.fetchMovies($state);
     },
+    openModal(movie) {
+      this.$refs.explorePage.openModal(movie.id);
+    },
+    toggleLike(likedMovie) {
+    const index = this.likedMovies.findIndex(movie => movie.id === likedMovie.id);
+    if (index !== -1) {
+      this.likedMovies.splice(index, 1);
+    } else {
+      this.likedMovies.push(likedMovie);
+    }
   },
+},
 };
 </script>
 

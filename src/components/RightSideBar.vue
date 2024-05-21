@@ -1,26 +1,54 @@
 <template>
-    <aside class="right-sidebar" :class="{ 'dark-mode': isDarkMode }">
-      <h3>LIKE List</h3>
-        <ul>
-            <!-- <li v-for="post in likedPosts" :key="post" style="border: 5px ridge; position: relative;">{{ post }}
-                <button style="position: absolute; top: 0; right: 0; background-color: transparent;border: none;">취소</button>
-            </li> -->
-        </ul>
-    </aside>
-  </template>
-  
-  <script>
-  export default {
-    computed: {
-      likedPosts() {
-        return this.$root.$data.인스타데이터.filter(post => post.liked).map(post => post.name);
-      },
-      isDarkMode() {
+  <aside class="right-sidebar" :class="{ 'dark-mode': isDarkMode }">
+    <h3>LIKE List</h3>
+    <ul>
+      <li v-for="movie in likedMovies" :key="movie.id" @click="openModal(movie)">
+        {{ movie.title }}
+      </li>
+    </ul>
+
+    <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': isDarkMode }">
+      <div class="modal-content" @click.stop :class="{ 'dark-mode': isDarkMode }">
+        <div class="modal-video-info">
+          <div class="poster-wrapper">
+            <img :src="'http://image.tmdb.org/t/p/w500' + selectedMovie.posterPath" alt="Movie Poster" class="poster-image">
+          </div>
+          <div class="modal-info" :class="{ 'dark-mode': isDarkMode }">
+            <h3>{{ selectedMovie.title }}</h3>
+            <p>{{ selectedMovie.overview }}</p>
+            <p><strong>Release Date:</strong> {{ selectedMovie.releaseDate }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+</template>
+
+<script>
+export default {
+  props: ['likedMovies'],
+  data() {
+    return {
+      showModal: false,
+      selectedMovie: null,
+    };
+  },
+  computed: {
+    isDarkMode() {
       return this.$root.isDarkMode;
     },
+  },
+  methods: {
+    openModal(movie) {
+      this.selectedMovie = movie;
+      this.showModal = true;
     },
-  };
-  </script>
+    closeModal() {
+      this.showModal = false;
+    },
+  },
+};
+</script>
   <style scoped>
   .right-sidebar {
     position: fixed;
