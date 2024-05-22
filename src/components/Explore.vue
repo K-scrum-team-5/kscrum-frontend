@@ -27,7 +27,7 @@
           </div>
           <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
             <h3>{{ selectedMovie?.title }}</h3>
-            <p>장르{{ selectedMovie?.genreString }}</p>
+            <p>장르: {{ selectedMovie?.genreString }}</p>
             <p class="overview">{{ selectedMovie?.overview }}</p>
             <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
             <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
@@ -205,7 +205,7 @@ export default {
 
 .modal-info .overview {
   display: -webkit-box;
-  -webkit-line-clamp: 10; /* 원하는 줄 수로 설정 */
+  -webkit-line-clamp: 8; /* 원하는 줄 수로 설정 */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;

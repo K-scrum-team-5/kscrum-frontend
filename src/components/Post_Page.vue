@@ -4,7 +4,7 @@
       <img :src="movies.url" alt="Post Image" @click="openModal(movies.id)">
     </div>
     <div class="post-content">
-      <LikeButton />
+      <LikeButton :isLiked="movies.liked" :movieId="movies.id"/>
       <p class="textover"><strong style="font-size: 18px;">{{ movies.original_title }}</strong></p>
       <p class="date">{{ movies.id }}</p>
     </div>
@@ -14,11 +14,11 @@
         <img :src="movies.url" alt="Post Image">
         <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
         <h3>{{ selectedMovie?.title }}</h3>
-        <p>장르{{ selectedMovie?.genreString }}</p>
+        <p><strong>장르:  </strong>{{ selectedMovie?.genreString }}</p>
         <p class="overview">{{ selectedMovie?.overview }}</p>
-        <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
-        <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
-        <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
+        <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }}  </p>
+        <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
+        <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
           </div>
       </div>
     </div>

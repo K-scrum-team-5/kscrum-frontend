@@ -8,19 +8,53 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
+  props: {
+    isLiked: {
+      type: Boolean,
+      default: false,
+    },
+    movieId: {
+      type: Number,
+      required: true,
+    },
+  },
   data() {
     return {
-      liked: false,
+      liked: this.isLiked,
     };
   },
   methods: {
     toggleLike() {
-      this.liked = !this.liked;
+      if (this.liked) {
+        axios.delete(`http://49.50.174.94:8080/api/movie/like/${encodeURIComponent(this.movieId)}`)
+            .then(() => {
+              this.liked = !this.liked;
+            })
+            .catch(error => {
+              console.error('Error unliking the movie:', error);
+            });
+      } else {
+        axios.post(`http://49.50.174.94:8080/api/movie/like/${encodeURIComponent(this.movieId)}`)
+            .then(() => {
+              this.liked = !this.liked;
+            })
+            .catch(error => {
+              console.error('Error liking the movie:', error);
+            });
+      }
+    },
+  },
+  watch: {
+    isLiked(newVal) {
+      this.liked = newVal;
     },
   },
 };
+
 </script>
+
 
 <style scoped>
 .like-btn {
