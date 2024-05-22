@@ -16,12 +16,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    width: 40rem;
+    /*width: 40rem;*/
     height: 100%;
     padding: 4rem 1rem 3rem 1rem;
     background: #ffffff;
     border-right: 0.1rem solid #dbdbdb;
-    transition: 0.3s;
+    transition: width 0.3s ease;
 }
 
 .sidebar-header {
@@ -72,29 +72,6 @@ body {
 
 .sidebar button > span > span {
     transition: 0.3s;
-}
-
-@media (max-width: 36.25rem) {
-    .logo-img {
-        display: none;
-    }
-
-    .logo-icon {
-        display: block;
-    }
-
-    .sidebar {
-        width: 7.2rem;
-    }
-
-    .sidebar button > span {
-        width: 5rem;
-    }
-
-    .sidebar button > span > span {
-        opacity: 0;
-        visibility: hidden;
-    }
 }
 
 .sidebar button i {
