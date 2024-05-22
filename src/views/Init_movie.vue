@@ -167,21 +167,21 @@
     margin: 0;
   }
   .init-movie {
-  font-size: medium;
-  color: gray;
-  background-color: white;
-  text-align: center;
-  padding: 10px;
+    font-size: medium;
+    color: gray;
+    background-color: white;
+    text-align: center;
+    padding: 10px;
 
-  &.dark-mode {
-    background-color: #333333;
-    color: #cccccc;
+    &.dark-mode {
+      background-color: #333333;
+      color: #cccccc;
+    }
   }
-}
 
   .v-btn.dark-mode {
-  background-color: #555555;
-  color: #ffffff;
+    background-color: #555555;
+    color: #ffffff;
   }
 
   .v-img {
@@ -254,21 +254,21 @@
   }
 
   .dark-mode {
-  background-color: #333333;
-  color: #ffffff;
-}
+    background-color: #333333;
+    color: #ffffff;
+  }
 
-.dark-mode .v-card {
-  background-color: #444444;
-  color: #ffffff;
-}
+  .dark-mode .v-card {
+    background-color: #444444;
+    color: #ffffff;
+  }
 
-.dark-mode .v-card-title {
-  color: #ffffff;
-}
+  .dark-mode .v-card-title {
+    color: #ffffff;
+  }
 
-.dark-mode .complete-btn {
-  background-color: #555555;
-  color: #ffffff;
-}
+  .dark-mode .complete-btn {
+    background-color: #555555;
+    color: #ffffff;
+  }
   </style>
