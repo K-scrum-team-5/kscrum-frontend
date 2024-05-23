@@ -1,50 +1,28 @@
 <template>
   <div class="container">
     <div class="gallery">
-      <div
-        class="gallery-item"
-        tabindex="0"
-        v-for="(movie, index) in movies"
-        :key="index"
-      >
-        <img
-          :src="movie.url"
-          class="gallery-image"
-          alt=""
-          @click="openModal(movie.id)"
-        />
+      <div class="gallery-item" tabindex="0" v-for="(movie, index) in movies" :key="index">
+        <img :src="movie.url" class="gallery-image" alt="" @click="openModal(movie)" />
       </div>
     </div>
 
     <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
 
-    <div
-      v-if="showModal"
-      class="modal"
-      @click="closeModal"
-      :class="{ 'dark-mode': $root.isDarkMode }"
-    >
+    <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
       <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
         <div class="modal-video-info">
           <div class="youtube-video-wrapper" v-if="trailerUrl">
-            <iframe
-              class="youtube-video"
-              :src="trailerUrl"
-              frameborder="0"
+            <iframe class="youtube-video" :src="trailerUrl" frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></iframe>
+              allowfullscreen></iframe>
           </div>
           <div class="poster-wrapper" v-else>
-            <img
-              v-if="selectedMovie"
-              :src="'http://image.tmdb.org/t/p/w500' + selectedMovie.poster_path"
-              alt="Post Image"
-              class="poster-image"
-            />
+            <img v-if="selectedMovie" :src="'http://image.tmdb.org/t/p/w500' + selectedMovie.poster_path"
+              alt="Post Image" class="poster-image" />
           </div>
           <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
             <h3>{{ selectedMovie?.title }}</h3>
+            <p>Movie ID: {{ selectedMovie?.id }}</p>
             <p>{{ selectedMovie?.overview }}</p>
             <p><strong>Popularity:</strong> {{ selectedMovie?.popularity }}</p>
             <p><strong>Release Date:</strong> {{ selectedMovie?.release_date }}</p>
@@ -52,8 +30,8 @@
               YouTube API quota exceeded. Showing movie poster instead.
             </p>
             <button @click="toggleLike(selectedMovie)">
-  {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Unlike' : 'Like' }}
-</button>
+              {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Unlike' : 'Like' }}
+            </button>
           </div>
         </div>
       </div>
@@ -118,15 +96,16 @@ export default {
     loadMore($state) {
       this.fetchMovies($state);
     },
-    openModal(movieId) {
+    openModal(movie) {
       this.showModal = true;
       this.trailerUrl = '';
-      this.selectedMovie = null;
+      this.selectedMovie = movie;
       this.quotaExceeded = false;
 
-      this.fetchMovieInfo(movieId)
+      this.fetchMovieInfo(movie.id)
         .then((response) => {
           this.selectedMovie = response.data;
+          this.selectedMovie.id = movie.id;
           return this.fetchYouTubeTrailer(
             this.selectedMovie.title,
             this.selectedMovie.release_date
@@ -152,27 +131,51 @@ export default {
         this.showModal = false;
       }
     },
-    toggleLike(movie) {
-    const likedMovie = {
-      id: movie.id,
-      title: movie.title,
-      posterPath: movie.poster_path,
-      overview: movie.overview,
-      releaseDate: movie.release_date,
-    };
-    this.$emit('toggle-like', likedMovie);
+    async toggleLike(movie) {
+      if (!movie || !movie.id) {
+        console.error('유효하지 않은 영화 객체:', movie);
+        return;
+      }
+
+      const movieId = movie.id;
+      const isLiked = this.likedMovies.some(m => m.id === movieId);
+      const url = `http://49.50.174.94:8080/api/movie/mark/${movieId}?movieId=${movieId}`;
+
+      try {
+        if (isLiked) {
+          await axios.delete(url);
+          console.log('좋아요 삭제 완료');
+        } else {
+          const response = await axios.post(url);
+          console.log('좋아요 등록 응답:', response.data);
+        }
+
+        const likedMovie = {
+          id: movie.id,
+          title: movie.title,
+          posterPath: movie.poster_path,
+          overview: movie.overview,
+          releaseDate: movie.release_date,
+        };
+        this.$emit('toggle-like', likedMovie);
+      } catch (error) {
+        console.error('좋아요 처리 오류:', error);
+      }
+    },
   },
-},
 };
 </script>
 
 <style>
-
+/* ... */
+</style>
+<style>
 .modal {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 50%; /* 너비 조정 */
+  width: 50%;
+  /* 너비 조정 */
   height: auto;
   background-color: rgba(0, 0, 0, 0.8);
   display: flex;
@@ -197,13 +200,15 @@ export default {
 .modal-video-info {
   display: flex;
   width: 100%;
-  justify-content: flex-start; /* 여백 제거 */
+  justify-content: flex-start;
+  /* 여백 제거 */
   align-items: center;
 }
 
 .youtube-video-wrapper {
   width: 50%;
-  padding-bottom: 28%; /* Aspect ratio 16:9 */
+  padding-bottom: 28%;
+  /* Aspect ratio 16:9 */
   position: relative;
 }
 
@@ -216,7 +221,8 @@ export default {
 }
 
 .poster-wrapper {
-  width: 50%; /* 포스터 너비 설정 */
+  width: 50%;
+  /* 포스터 너비 설정 */
 }
 
 .poster-image {
@@ -289,5 +295,4 @@ export default {
 .error {
   color: #ff5555;
 }
-
 </style>

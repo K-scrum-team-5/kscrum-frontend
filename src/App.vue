@@ -5,13 +5,13 @@
         <SideBar_Page />
         <ExplorePage ref="explorePage" :likedMovies="likedMovies" @toggle-like="toggleLike" />
         <div class="footer"></div>
-        <RightSideBar :likedMovies="likedMovies" @open-modal="openModal" />
+        <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
       </template>
       <template v-else-if="isOpenGenre">
         <SideBar_Page />
         <GenreProfile />
         <div class="footer"></div>
-        <RightSideBar :likedMovies="likedMovies" @open-modal="openModal" />
+        <RightSideBar ref="rightSideBar" :initialLikedMovies="likedMovies" @open-modal="openModal" />
       </template>
       <template v-else>
         <router-view />
@@ -23,7 +23,7 @@
               <Container_Page :movies="movies" />
               <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
               <div class="footer"></div>
-              <RightSideBar :likedMovies="likedMovies" @open-modal="openModal" />
+              <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
             </div>
           </div>
         </template>
@@ -122,26 +122,30 @@ export default {
       this.$refs.explorePage.openModal(movie.id);
     },
     toggleLike(likedMovie) {
-    const index = this.likedMovies.findIndex(movie => movie.id === likedMovie.id);
-    if (index !== -1) {
-      this.likedMovies.splice(index, 1);
-    } else {
-      this.likedMovies.push(likedMovie);
-    }
+      const index = this.likedMovies.findIndex(movie => movie.id === likedMovie.id);
+      if (index !== -1) {
+        this.likedMovies.splice(index, 1);
+      } else {
+        this.likedMovies.push(likedMovie);
+      }
+      this.$refs.rightSideBar.fetchLikedMovies();
+    },
   },
-},
 };
 </script>
+
 
 <style>
 body {
   margin: 0;
 }
+
 ul {
   padding: 5px;
   list-style-type: none;
-  
+
 }
+
 .header {
   width: 100%;
   height: 40px;
@@ -150,6 +154,7 @@ ul {
   position: sticky;
   top: 0;
 }
+
 .header-button-left {
   color: skyblue;
   float: left;
@@ -158,6 +163,7 @@ ul {
   cursor: pointer;
   margin-top: 10px;
 }
+
 .header-button-right {
   color: skyblue;
   float: right;
@@ -165,6 +171,7 @@ ul {
   cursor: pointer;
   margin-top: 10px;
 }
+
 .footer {
   width: 100%;
   position: sticky;
@@ -172,6 +179,7 @@ ul {
   padding-bottom: 10px;
   background-color: white;
 }
+
 .footer-button-plus {
   width: 80px;
   margin: auto;
@@ -180,17 +188,21 @@ ul {
   font-size: 24px;
   padding-top: 12px;
 }
+
 .sample-box {
   width: 100%;
   height: 600px;
   background-color: bisque;
 }
+
 .inputfile {
   display: none;
 }
+
 .input-plus {
   cursor: pointer;
 }
+
 .app-container {
   display: flex;
 }
@@ -199,12 +211,15 @@ ul {
   flex: 1;
   margin-right: 250px;
 }
+
 .v-btn {
   text-transform: none;
 }
+
 .v-container {
   padding-top: 20px;
 }
+
 #app {
   box-sizing: border-box;
   font-family: 'consolas';
