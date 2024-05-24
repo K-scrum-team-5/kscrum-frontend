@@ -4,7 +4,8 @@
       <img :src="movies.url" alt="Post Image" @click="openModal(movies.id)">
     </div>
     <div class="post-content">
-      <LikeButton :isLiked="movies.liked" :movieId="movies.id"/>
+
+
       <p class="textover"><strong style="font-size: 18px;">{{ movies.original_title }}</strong></p>
       <p class="date">{{ movies.id }}</p>
     </div>
@@ -19,7 +20,11 @@
         <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }}  </p>
         <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
         <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
+        <button @click="toggleLike(movies)">
+            {{ isLiked ? 'Delete from Bookmark' : 'Add to Bookmark' }}
+          </button>
           </div>
+
       </div>
     </div>
   </div>
@@ -40,6 +45,7 @@ export default {
     return {
       selectedMovie: null,
       showModal: false,
+      isLiked: false,
     };
   },
   methods: {
@@ -62,9 +68,38 @@ export default {
         this.showModal = false;
       }
     },
-    // toggleLike() {
-    //   this.$emit('toggle-like', this.인스타데이터.name);
-    // },
+    async toggleLike(movie) {
+      if (!movie || !movie.id) {
+        console.error('유효하지 않은 영화 객체:', movie);
+        return;
+      }
+
+      const movieId = movie.id;
+      const url = `http://49.50.174.94:8080/api/movie/mark/${movieId}?movieId=${movieId}`;
+
+      try {
+        if (this.isLiked) {
+          await axios.delete(url);
+          console.log('좋아요 삭제 완료');
+        } else {
+          const response = await axios.post(url);
+          console.log('좋아요 등록 응답:', response.data);
+        }
+
+        this.isLiked = !this.isLiked;
+
+        const likedMovie = {
+          id: movie.id,
+          title: movie.title,
+          posterPath: movie.poster_path,
+          overview: movie.overview,
+          releaseDate: movie.release_date,
+        };
+        this.$emit('toggle-like', likedMovie);
+      } catch (error) {
+        console.error('좋아요 처리 오류:', error);
+      }
+    },
   },
 };
 </script>
