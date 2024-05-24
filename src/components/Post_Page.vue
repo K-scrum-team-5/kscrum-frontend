@@ -33,11 +33,8 @@
 <script>
 import '@/styles/modal.css';
 import axios from "axios"; // CSS 파일 임포트
-import LikeButton from './LikeButton.vue';
+
 export default {
-  components: {
-    LikeButton,
-  },
   props: {
     movies: Object,
   },
