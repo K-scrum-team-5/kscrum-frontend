@@ -7,7 +7,8 @@
         </div>
         <div class="profile-user-settings">
           <h1 class="profile-user-name">{{ genreName }}</h1>
-          <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
+          <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog"
+              aria-hidden="true"></i></button>
         </div>
         <div class="profile-stats"></div>
         <div class="profile-bio"></div>
@@ -27,6 +28,9 @@
         <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
           <h3>{{ selectedMovie.original_title }}</h3>
           <p class="date">{{ selectedMovie.id }}</p>
+          <button @click="toggleLike(selectedMovie)">
+            {{ isLiked(selectedMovie) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
+          </button>
         </div>
       </div>
     </div>
@@ -54,6 +58,7 @@ export default {
   data() {
     return {
       movies: [],
+      likedMovies: [],
       loading: false,
       busy: false,
       page: 0,
@@ -63,6 +68,17 @@ export default {
   },
   mounted() {
     this.fetchMovies();
+    this.fetchLikedMovies();
+  },
+  watch: {
+    likedMovies: {
+      handler() {
+        if (this.selectedMovie) {
+          this.selectedMovie.isLiked = this.isLiked(this.selectedMovie);
+        }
+      },
+      deep: true,
+    },
   },
   methods: {
     fetchMovies($state) {
@@ -70,29 +86,29 @@ export default {
       const url = `http://49.50.174.94:8080/api/movie/genre?page=${this.page}&size=8&genre=${this.genreName}`;
       axios.get(url)
 
-          .then(response => {
-            if (response.data.length) {
-              this.movies = [...this.movies, ...response.data];
-              this.page++;
-              if ($state) {
-                $state.loaded();
-              }
-            } else {
-              if ($state) {
-                $state.complete();
-              }
+        .then(response => {
+          if (response.data.length) {
+            this.movies = [...this.movies, ...response.data];
+            this.page++;
+            if ($state) {
+              $state.loaded();
             }
-            this.loading = false;
-            this.busy = false;
-          })
-          .catch(error => {
-            console.error(error);
+          } else {
             if ($state) {
               $state.complete();
             }
-            this.loading = false;
-            this.busy = false;
-          });
+          }
+          this.loading = false;
+          this.busy = false;
+        })
+        .catch(error => {
+          console.error(error);
+          if ($state) {
+            $state.complete();
+          }
+          this.loading = false;
+          this.busy = false;
+        });
     },
     loadMore($state) {
       this.fetchMovies($state);
@@ -106,12 +122,47 @@ export default {
         this.showModal = false;
       }
     },
+    fetchLikedMovies() {
+      axios.get('http://49.50.174.94:8080/api/movie/mark')
+        .then(response => {
+          this.likedMovies = response.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    isLiked(movie) {
+      return this.likedMovies.some(m => m.id === movie?.id);
+    },
+    async toggleLike(movie) {
+      if (!movie || !movie.id) {
+        console.error('유효하지 않은 영화 객체:', movie);
+        return;
+      }
+
+      const movieId = movie.id;
+      const isLiked = this.isLiked(movie);
+      const url = `http://49.50.174.94:8080/api/movie/mark/${movieId}?movieId=${movieId}`;
+
+      try {
+        if (isLiked) {
+          await axios.delete(url);
+          console.log('좋아요 삭제 완료');
+        } else {
+          const response = await axios.post(url);
+          console.log('좋아요 등록 응답:', response.data);
+        }
+
+        this.fetchLikedMovies();
+      } catch (error) {
+        console.error('좋아요 처리 오류:', error);
+      }
+    },
   },
 };
 </script>
 
 <style>
-
 :root {
   font-size: 10px;
 }
@@ -551,5 +602,4 @@ Remove or comment-out the code block below to see how the browser will fall-back
 .modal-info.dark-mode .date {
   color: #cccccc;
 }
-
 </style>

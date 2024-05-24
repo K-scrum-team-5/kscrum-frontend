@@ -30,7 +30,7 @@
               YouTube API quota exceeded. Showing movie poster instead.
             </p>
             <button @click="toggleLike(selectedMovie)">
-              {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Unlike' : 'Like' }}
+              {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
             </button>
           </div>
         </div>

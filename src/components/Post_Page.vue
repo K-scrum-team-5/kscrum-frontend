@@ -4,9 +4,7 @@
       <img :src="movies.url" alt="Post Image" @click="openModal">
     </div>
     <div class="post-content">
-    <!-- <div class="buttons">
-      <button class="like-btn" @click="toggleLike">{{ 인스타데이터.liked ? '좋아요  취소' : '좋아요' }}</button>
-    </div> -->
+
       <p class="textover"><strong style="font-size: 18px;">{{ movies.original_title }}</strong></p>
       <p class="date">{{ movies.id }}</p>
     </div>
@@ -17,6 +15,9 @@
         <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
           <h3>{{ movies.original_title }}</h3>
           <p class="date">{{ movies.id }}</p>
+          <button @click="toggleLike(movies)">
+            {{ isLiked ? 'Delete from Bookmark' : 'Add to Bookmark' }}
+          </button>
         </div>
       </div>
     </div>
@@ -24,6 +25,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   props: {
     movies: Object,
@@ -31,6 +33,7 @@ export default {
   data() {
     return {
       showModal: false,
+      isLiked: false,
     };
   },
   methods: {
@@ -42,9 +45,38 @@ export default {
         this.showModal = false;
       }
     },
-    // toggleLike() {
-    //   this.$emit('toggle-like', this.인스타데이터.name);
-    // },
+    async toggleLike(movie) {
+      if (!movie || !movie.id) {
+        console.error('유효하지 않은 영화 객체:', movie);
+        return;
+      }
+
+      const movieId = movie.id;
+      const url = `http://49.50.174.94:8080/api/movie/mark/${movieId}?movieId=${movieId}`;
+
+      try {
+        if (this.isLiked) {
+          await axios.delete(url);
+          console.log('좋아요 삭제 완료');
+        } else {
+          const response = await axios.post(url);
+          console.log('좋아요 등록 응답:', response.data);
+        }
+
+        this.isLiked = !this.isLiked;
+
+        const likedMovie = {
+          id: movie.id,
+          title: movie.title,
+          posterPath: movie.poster_path,
+          overview: movie.overview,
+          releaseDate: movie.release_date,
+        };
+        this.$emit('toggle-like', likedMovie);
+      } catch (error) {
+        console.error('좋아요 처리 오류:', error);
+      }
+    },
   },
 };
 </script>
@@ -94,8 +126,8 @@ export default {
 
 .buttons {
   margin-top: 10px;
-  
-  
+
+
 }
 
 .like-btn {
@@ -111,7 +143,7 @@ export default {
   margin-top: -8px;
 }
 
-.textover{
+.textover {
   display: inline-block;
   width: 400px;
   padding: 10px;

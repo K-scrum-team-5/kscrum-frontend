@@ -1,5 +1,5 @@
 <template>
- <div>
+  <div>
     <Post_Page :movies="movies[i]" v-for="(a, i) in movies" :key="i" @toggle-like="toggleLike" />
   </div>
 </template>
@@ -26,11 +26,8 @@ export default {
 </script>
 
 <style>
-
 .dark-mode {
   background-color: #333333;
   color: #ffffff;
 }
-
-
 </style>

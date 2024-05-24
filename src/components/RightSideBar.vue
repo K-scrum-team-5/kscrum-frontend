@@ -1,6 +1,6 @@
 <template>
   <aside class="right-sidebar" :class="{ 'dark-mode': isDarkMode }">
-    <h3>LIKE List</h3>
+    <h3>Bookmark List</h3>
     <ul>
       <li v-for="movie in likedMovies" :key="movie.id" @click="openModal(movie)">
         {{ movie.original_title }}
@@ -34,12 +34,19 @@ export default {
       likedMovies: this.initialLikedMovies,
       showModal: false,
       selectedMovie: null,
+      pollingInterval: null,
     };
   },
   computed: {
     isDarkMode() {
       return this.$root.isDarkMode;
     },
+  },
+  mounted() {
+    this.startPolling();
+  },
+  beforeUnmount() {
+    this.stopPolling();
   },
   methods: {
     fetchLikedMovies() {
@@ -50,6 +57,14 @@ export default {
         .catch(error => {
           console.error(error);
         });
+    },
+    startPolling() {
+      this.pollingInterval = setInterval(() => {
+        this.fetchLikedMovies();
+      }, 1000);
+    },
+    stopPolling() {
+      clearInterval(this.pollingInterval);
     },
     openModal(movie) {
       this.selectedMovie = movie;
