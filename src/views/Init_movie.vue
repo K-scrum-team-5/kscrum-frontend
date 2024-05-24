@@ -111,15 +111,12 @@
       async refresh(genre_name) {
         try {
           const index = this.genres.findIndex(genre => genre.genre === genre_name);
-          if(index !== -1) this.genres.splice(index,1);
-          this.genres.movieList  = [];
-          
-          const config = { base_Url: 'http://49.50.174.94:8080/api/movie/choice/genre?genre='};
-          const response = await axios.get(config.base_Url + encodeURIComponent(genre_name));
-          this.genres.push(response.data);
-
-          console.log('Data refresh: ', genre_name);
-          console.log('refresh: ', response.data);
+          if(index !== -1) {
+            const config = { base_Url: 'http://49.50.174.94:8080/api/movie/choice/genre?genre='};
+            const response = await axios.get(config.base_Url + encodeURIComponent(genre_name));
+            this.genres[index] = response.data;
+            console.log('refresh: ', genre_name, response.data);
+          }
         } catch (error) {
           console.error('Error_refresh:', error);
         }
@@ -170,21 +167,21 @@
     margin: 0;
   }
   .init-movie {
-  font-size: medium;
-  color: gray;
-  background-color: white;
-  text-align: center;
-  padding: 10px;
+    font-size: medium;
+    color: gray;
+    background-color: white;
+    text-align: center;
+    padding: 10px;
 
-  &.dark-mode {
-    background-color: #333333;
-    color: #cccccc;
+    &.dark-mode {
+      background-color: #333333;
+      color: #cccccc;
+    }
   }
-}
 
   .v-btn.dark-mode {
-  background-color: #555555;
-  color: #ffffff;
+    background-color: #555555;
+    color: #ffffff;
   }
 
   .v-img {
@@ -257,21 +254,21 @@
   }
 
   .dark-mode {
-  background-color: #333333;
-  color: #ffffff;
-}
+    background-color: #333333;
+    color: #ffffff;
+  }
 
-.dark-mode .v-card {
-  background-color: #444444;
-  color: #ffffff;
-}
+  .dark-mode .v-card {
+    background-color: #444444;
+    color: #ffffff;
+  }
 
-.dark-mode .v-card-title {
-  color: #ffffff;
-}
+  .dark-mode .v-card-title {
+    color: #ffffff;
+  }
 
-.dark-mode .complete-btn {
-  background-color: #555555;
-  color: #ffffff;
-}
+  .dark-mode .complete-btn {
+    background-color: #555555;
+    color: #ffffff;
+  }
   </style>
