@@ -4,8 +4,7 @@
       <img :src="movies.url" alt="Post Image" @click="openModal(movies.id)">
     </div>
     <div class="post-content">
-
-
+      <LikeButton :isLiked="movies.liked" :movieId="movies.id"/>
       <p class="textover"><strong style="font-size: 18px;">{{ movies.original_title }}</strong></p>
       <p class="date">{{ movies.id }}</p>
     </div>
@@ -33,8 +32,12 @@
 <script>
 import '@/styles/modal.css';
 import axios from "axios"; // CSS 파일 임포트
+import LikeButton from './LikeButton.vue';  
 
 export default {
+  components : {
+    LikeButton,
+  },
   props: {
     movies: Object,
   },
