@@ -11,32 +11,29 @@
     <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
 
     <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
-      <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
-        <div class="modal-video-info">
-          <div class="youtube-video-wrapper" v-if="trailerUrl">
-            <iframe class="youtube-video" :src="trailerUrl" frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen></iframe>
-          </div>
-          <div class="poster-wrapper" v-else>
-            <img v-if="selectedMovie" :src="'http://image.tmdb.org/t/p/w500' + selectedMovie.poster_path"
-              alt="Post Image" class="poster-image" />
-          </div>
-          <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
-            <h3>{{ selectedMovie?.title }}</h3>
-            <p>장르: {{ selectedMovie?.genreString }}</p>
-            <p class="overview">{{ selectedMovie?.overview }}</p>
-            <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
-            <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
-            <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
-            <p v-if="quotaExceeded" class="error">YouTube API quota exceeded. Showing movie poster instead.</p>
-            <button @click="toggleLike(selectedMovie)">
-              {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
-            </button>
-          </div>
-        </div>
-      </div>
+  <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
+    <img :src="selectedMovie?.url" alt="Post Image">
+    <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
+      <h3>{{ selectedMovie?.title }}</h3>
+      <p><strong>장르: </strong>{{ selectedMovie?.genreString }}</p>
+      <p class="overview" :class="{ 'expanded': selectedMovie && selectedMovie.showFullOverview }">
+        {{ selectedMovie && selectedMovie.overview }}
+      </p>
+      <p>
+        <button v-if="selectedMovie && selectedMovie.overview && selectedMovie.overview.length > 100"
+                @click="toggleOverview">
+          {{ selectedMovie && selectedMovie.showFullOverview ? '접기' : '펼치기' }}
+        </button>
+      </p>
+      <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }} </p>
+      <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
+      <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
+      <button @click="toggleLike(selectedMovie)">
+        {{ isLiked ? 'Delete from Bookmark' : 'Add to Bookmark' }}
+      </button>
     </div>
+  </div>
+</div>
   </div>
 </template>
 
@@ -96,35 +93,19 @@ export default {
       this.fetchMovies($state);
     },
     openModal(movie) {
-      this.showModal = true;
-      this.trailerUrl = '';
-      this.selectedMovie = movie;
-      this.quotaExceeded = false;
+  this.showModal = true;
+  this.selectedMovie = null;
 
-      this.fetchMovieInfo(movie.id)
-        .then((response) => {
-          this.selectedMovie = response.data;
-          this.selectedMovie.id = movie.id;
-          return this.fetchYouTubeTrailer(
-            this.selectedMovie.title,
-            this.selectedMovie.release_date
-          );
-        })
-        .then((response) => {
-          const videoId = response.data.items[0].id.videoId;
-          this.trailerUrl = `https://www.youtube.com/embed/${videoId}`;
-        })
-        .catch((error) => {
-          if (
-            error.response &&
-            error.response.data.error.errors[0].reason === 'quotaExceeded'
-          ) {
-            this.quotaExceeded = true;
-          } else {
-            console.error('Error:', error);
-          }
-        });
-    },
+  this.fetchMovieInfo(movie.id)
+    .then(response => {
+      this.selectedMovie = response.data;
+      this.selectedMovie.showFullOverview = false; // 추가
+      return response.data;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+},
     closeModal(event) {
       if (event.target === event.currentTarget) {
         this.showModal = false;
@@ -161,12 +142,25 @@ export default {
         console.error('좋아요 처리 오류:', error);
       }
     },
+    toggleOverview() {
+  if (this.selectedMovie) {
+    this.selectedMovie.showFullOverview = !this.selectedMovie.showFullOverview;
+  }
+},
+    truncateOverview(overview) {
+      if (!overview) {
+        return '';
+      }
+      if (overview.length <= 100) {
+        return overview;
+      }
+      return overview.slice(0, 100) + '...';
+    },
   },
 };
 </script>
 
 <style>
-
 .top-space {
   height: 20px;
 }
@@ -175,8 +169,9 @@ export default {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 60%; /* 너비 조정 */
-  height: auto;
+  width: 100%;
+  /* 너비 조정 */
+  height: 80%;
   background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
@@ -188,11 +183,11 @@ export default {
 
 .modal-content {
   width: 80%;
-  height: 70%;
+  height: 100%;
   background-color: white;
   padding: 20px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   border-radius: 10px;
 }
@@ -201,14 +196,12 @@ export default {
   display: flex;
   width: 100%;
   justify-content: flex-start;
-  /* 여백 제거 */
   align-items: center;
 }
 
 .youtube-video-wrapper {
   width: 50%;
   padding-bottom: 28%;
-  /* Aspect ratio 16:9 */
   position: relative;
 }
 
@@ -220,10 +213,14 @@ export default {
   height: 100%;
 }
 
+
 .poster-wrapper {
   width: 50%;
-  /* 포스터 너비 설정 */
+  display: flex;
+  justify-content: center;
+  transform: translateX(20px); /* 추가 */
 }
+
 
 .poster-image {
   width: 100%;
@@ -232,15 +229,12 @@ export default {
 }
 
 .modal-info {
-  width: 70%;
+  width: 100%;
   padding: 20px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
   margin-left: 0;
 }
-
 .modal-info img {
   width: 100%;
   height: auto;
@@ -250,7 +244,8 @@ export default {
 
 .modal-info .overview {
   display: -webkit-box;
-  -webkit-line-clamp: 8; /* 원하는 줄 수로 설정 */
+  -webkit-line-clamp: 8;
+  /* 원하는 줄 수로 설정 */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -287,12 +282,12 @@ export default {
 }
 
 .modal-content.dark-mode {
-  background-color: #333333;
+  background-color: #444444;
   color: #ffffff;
 }
 
 .modal-info.dark-mode {
-  background-color: #444444;
+  background-color: #333333;
   color: #ffffff;
 }
 
@@ -302,5 +297,33 @@ export default {
 
 .error {
   color: #ff5555;
+}
+
+.overview {
+  position: relative;
+  line-height: 1.4;
+  max-height: 4.2em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.overview.expanded {
+  max-height: none;
+  overflow: visible;
+  text-overflow: initial;
+  display: block;
+}
+
+.overview button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: none;
+  border: none;
+  color: eeeeeee;
+  cursor: pointer;
 }
 </style>

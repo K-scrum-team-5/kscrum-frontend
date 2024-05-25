@@ -4,7 +4,7 @@
       <img :src="movies.url" alt="Post Image" @click="openModal(movies.id)">
     </div>
     <div class="post-content">
-      <LikeButton :isLiked="movies.liked" :movieId="movies.id"/>
+      <LikeButton :isLiked="movies.liked" :movieId="movies.id" />
       <p class="textover"><strong style="font-size: 18px;">{{ movies.original_title }}</strong></p>
       <p class="date">{{ movies.id }}</p>
     </div>
@@ -13,17 +13,22 @@
       <div class="modal-content" :class="{ 'dark-mode': $root.isDarkMode }">
         <img :src="movies.url" alt="Post Image">
         <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
-        <h3>{{ selectedMovie?.title }}</h3>
-        <p><strong>장르:  </strong>{{ selectedMovie?.genreString }}</p>
-        <p class="overview">{{ selectedMovie?.overview }}</p>
-        <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }}  </p>
-        <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
-        <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
-        <button @click="toggleLike(movies)">
+          <h3>{{ selectedMovie?.title }}</h3>
+          <p><strong>장르: </strong>{{ selectedMovie?.genreString }}</p>
+          <p class="overview" :class="{ 'expanded': showFullOverview }">
+            {{ selectedMovie && selectedMovie.overview }}
+          </p>
+          <p><button v-if="selectedMovie && selectedMovie.overview && selectedMovie.overview.length > 100"
+              @click="toggleOverview">
+              {{ showFullOverview ? '접기' : '펼치기' }}
+            </button></p>
+          <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }} </p>
+          <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
+          <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
+          <button @click="toggleLike(movies)">
             {{ isLiked ? 'Delete from Bookmark' : 'Add to Bookmark' }}
           </button>
-          </div>
-
+        </div>
       </div>
     </div>
   </div>
@@ -32,10 +37,10 @@
 <script>
 import '@/styles/modal.css';
 import axios from "axios"; // CSS 파일 임포트
-import LikeButton from './LikeButton.vue';  
+import LikeButton from './LikeButton.vue';
 
 export default {
-  components : {
+  components: {
     LikeButton,
   },
   props: {
@@ -46,6 +51,7 @@ export default {
       selectedMovie: null,
       showModal: false,
       isLiked: false,
+      showFullOverview: false,
     };
   },
   methods: {
@@ -58,10 +64,10 @@ export default {
       this.selectedMovie = null; // 모달을 열 때 이전 선택한 영화 정보 초기화
 
       this.fetchMovieInfo(movieId)
-          .then(response => {
-            this.selectedMovie = response.data;
-            return response.data;
-          });
+        .then(response => {
+          this.selectedMovie = response.data;
+          return response.data;
+        });
     },
     closeModal(event) {
       if (event.target === event.currentTarget) {
@@ -100,9 +106,22 @@ export default {
         console.error('좋아요 처리 오류:', error);
       }
     },
+    toggleOverview() {
+      this.showFullOverview = !this.showFullOverview;
+    },
+    truncateOverview(overview) {
+      if (!overview) {
+        return '';
+      }
+      if (overview.length <= 100) {
+        return overview;
+      }
+      return overview.slice(0, 100) + '...';
+    },
   },
 };
 </script>
+
 
 <style scoped>
 .post {
@@ -168,8 +187,8 @@ export default {
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
+
 
 .post.dark-mode {
   border-color: #555555;
@@ -184,11 +203,39 @@ export default {
 }
 
 .modal-info.dark-mode {
-  background-color: #444444;
+  background-color: #333333;
   color: #ffffff;
 }
 
 .modal-info.dark-mode .date {
   color: #cccccc;
+}
+
+.overview {
+  position: relative;
+  line-height: 1.4;
+  max-height: 4.2em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.overview.expanded {
+  max-height: none;
+  overflow: visible;
+  text-overflow: initial;
+  display: block;
+}
+
+.overview button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: none;
+  border: none;
+  color: eeeeeee;
+  cursor: pointer;
 }
 </style>
