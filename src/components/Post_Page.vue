@@ -10,20 +10,19 @@
     </div>
 
     <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
-      <div class="modal-content" :class="{ 'dark-mode': $root.isDarkMode }">
+      <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
         <img :src="movies.url" alt="Post Image">
         <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
-        <h3>{{ selectedMovie?.title }}</h3>
-        <p><strong>장르:  </strong>{{ selectedMovie?.genreString }}</p>
-        <p class="overview">{{ selectedMovie?.overview }}</p>
-        <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }}  </p>
-        <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
-        <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
-        <button @click="toggleLike(movies)">
+          <h3 class="modal-title">{{ selectedMovie?.title }}</h3>
+          <p><strong>장르:  </strong>{{ selectedMovie?.genreString }}</p>
+          <p class="overview"><strong>개요</strong><br>{{ selectedMovie?.overview }}</p>
+          <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }}  </p>
+          <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
+          <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
+          <button @click="toggleLike(movies)">
             {{ isLiked ? 'Delete from Bookmark' : 'Add to Bookmark' }}
           </button>
-          </div>
-
+        </div>
       </div>
     </div>
   </div>
@@ -170,25 +169,10 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.post.dark-mode {
-  border-color: #555555;
+.modal-info .modal-title {
+  font-size: 28px; /* 제목 글자 크기 조정 */
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-.modal.dark-mode {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.modal-content.dark-mode {
-  background-color: #333333;
-}
-
-.modal-info.dark-mode {
-  background-color: #444444;
-  color: #ffffff;
-}
-
-.modal-info.dark-mode .date {
-  color: #cccccc;
-}
 </style>
