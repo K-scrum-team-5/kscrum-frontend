@@ -4,11 +4,16 @@
       <img :src="movies.url" alt="Post Image" @click="openModal(movies.id)">
     </div>
     <div class="post-content">
-      <LikeButton :isLiked="movies.liked" :movieId="movies.id" />
+      <div class="buttons">
+        <LikeButton :isLiked="movies.liked" :movieId="movies.id" />
+        <button @click="toggleLike(movies)" class="bookmark-btn">
+          <i :class="isLiked ? 'fas fa-star' : 'far fa-star'"></i>
+          {{ isLiked ? '북마크 취소' : '북마크' }}
+        </button>
+      </div>
       <p class="textover"><strong style="font-size: 18px;">{{ movies.original_title }}</strong></p>
       <p class="date">{{ movies.id }}</p>
     </div>
-
     <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
       <div class="modal-content" :class="{ 'dark-mode': $root.isDarkMode }">
         <img :src="movies.url" alt="Post Image">
@@ -25,9 +30,6 @@
           <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }} </p>
           <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
           <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
-          <button @click="toggleLike(movies)">
-            {{ isLiked ? 'Delete from Bookmark' : 'Add to Bookmark' }}
-          </button>
         </div>
       </div>
     </div>
@@ -165,9 +167,33 @@ export default {
   font-size: 14px;
 }
 
+
 .buttons {
-  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
+
+.bookmark-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.bookmark-btn i {
+  margin-right: 8px;
+  font-size: 20px;
+}
+
+.bookmark-btn .fas.fa-star {
+  color: gold;
+}
+
 
 .like-btn {
   background-color: transparent;

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="margin-right: 25px">
     <button @click="toggleLike" class="like-btn">
       <i :class="liked ? 'fas fa-heart' : 'far fa-heart'"></i>
       {{ liked ? '좋아요 취소' : '좋아요' }}
