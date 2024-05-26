@@ -26,33 +26,22 @@
         <img :src="movie.url" class="gallery-image" alt="" @click="openModal(movie)" />
       </div>
     </div>
-
     <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
 
     <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
       <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
-        <div class="modal-video-info">
-          <div class="youtube-video-wrapper" v-if="trailerUrl">
-            <iframe class="youtube-video" :src="trailerUrl" frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen></iframe>
-          </div>
-          <div class="poster-wrapper" v-else>
-            <img v-if="selectedMovie" :src="'http://image.tmdb.org/t/p/w500' + selectedMovie.poster_path"
-              alt="Post Image" class="poster-image" />
-          </div>
-          <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
-            <h3>{{ selectedMovie?.title }}</h3>
-            <p>장르: {{ selectedMovie?.genreString }}</p>
-            <p class="overview">{{ selectedMovie?.overview }}</p>
-            <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
-            <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
-            <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
-            <p v-if="quotaExceeded" class="error">YouTube API quota exceeded. Showing movie poster instead.</p>
-            <button @click="toggleLike(selectedMovie)">
-              {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
-            </button>
-          </div>
+        <img v-if="selectedMovie" :src="'http://image.tmdb.org/t/p/w500' + selectedMovie.poster_path">
+        <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
+          <h3 class="modal-title">{{ selectedMovie?.title }}</h3>
+          <p>장르: {{ selectedMovie?.genreString }}</p>
+          <p class="overview"><strong>개요</strong><br>{{ selectedMovie?.overview }}</p>
+          <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
+          <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
+          <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
+         <!-- <p v-if="quotaExceeded" class="error">YouTube API quota exceeded. Showing movie poster instead.</p>-->
+          <button @click="toggleLike(selectedMovie)">
+            {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
+          </button>
         </div>
       </div>
     </div>
@@ -63,6 +52,7 @@
 import axios from 'axios';
 import InfiniteLoading from 'vue-infinite-loading';
 import '@/styles/gallery.css';
+import '@/styles/modal.css';
 
 //const YOUTUBE_API_KEY = process.env.VUE_APP_YOUTUBE_API_KEY;
 
@@ -253,22 +243,20 @@ export default {
 
 .modal {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 60%; /* 너비 조정 */
-  height: auto;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
-  padding: 20px;
-
 }
 
 .modal-content {
-  width: 80%;
-  height: 70%;
+  width: 60%;
+  height: 50%;
   background-color: white;
   padding: 20px;
   display: flex;
@@ -311,73 +299,9 @@ export default {
   object-fit: contain;
 }
 
-.modal-info {
-  width: 70%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  margin-left: 0;
-}
-
-.modal-info img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  margin-bottom: 20px;
-}
-
-.modal-info .overview {
-  display: -webkit-box;
-  -webkit-line-clamp: 8; /* 원하는 줄 수로 설정 */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.modal-info h3 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.modal-info p {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.modal-info .date {
-  font-size: 14px;
-  color: grey;
-}
-
 .error {
   color: red;
   font-weight: bold;
-}
-
-.dark-mode {
-  background-color: #1a1a1a;
-  color: #ffffff;
-}
-
-.modal.dark-mode {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.modal-content.dark-mode {
-  background-color: #333333;
-  color: #ffffff;
-}
-
-.modal-info.dark-mode {
-  background-color: #444444;
-  color: #ffffff;
-}
-
-.modal-info.dark-mode .date {
-  color: #cccccc;
 }
 
 .error {

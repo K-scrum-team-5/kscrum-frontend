@@ -26,9 +26,9 @@
       <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
         <img :src="selectedMovie.url" alt="Post Image">
         <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
-          <h3>{{ selectedMovie?.title }}</h3>
+          <h3 class="modal-title">{{ selectedMovie?.title }}</h3>
           <p>장르: {{ selectedMovie?.genreString }}</p>
-          <p class="overview">{{ selectedMovie?.overview }}</p>
+          <p class="overview"><strong>개요</strong><br>{{ selectedMovie?.overview }}</p>
           <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
           <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
           <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
@@ -46,6 +46,7 @@
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import InfiniteLoading from 'vue-infinite-loading';
+import '@/styles/modal.css';
 
 
 export default {
@@ -552,75 +553,4 @@ Remove or comment-out the code block below to see how the browser will fall-back
   }
 }
 
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-content {
-  width: 60%;
-  height: 50%;
-  background-color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-radius: 10px;
-}
-
-.modal-content img {
-  width: 50%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.modal-info {
-  width: 30%;
-  padding: 20px;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-info h3 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.modal-info p {
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.modal-info .date {
-  font-size: 12px;
-  color: grey;
-}
-
-.modal.dark-mode {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.modal-content.dark-mode {
-  background-color: #333333;
-}
-
-.modal-info.dark-mode {
-  background-color: #444444;
-  color: #ffffff;
-}
-
-.modal-info.dark-mode .date {
-  color: #cccccc;
-}
 </style>
