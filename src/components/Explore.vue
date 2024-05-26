@@ -29,6 +29,7 @@
     <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
 
     <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
+
       <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
         <img v-if="selectedMovie" :src="'http://image.tmdb.org/t/p/w500' + selectedMovie.poster_path">
         <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
@@ -45,6 +46,8 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
   </div>
 </template>
 
@@ -136,35 +139,19 @@ export default {
       this.fetchMovies($state);
     },
     openModal(movie) {
-      this.showModal = true;
-      this.trailerUrl = '';
-      this.selectedMovie = movie;
-      this.quotaExceeded = false;
+  this.showModal = true;
+  this.selectedMovie = null;
 
-      this.fetchMovieInfo(movie.id)
-        .then((response) => {
-          this.selectedMovie = response.data;
-          this.selectedMovie.id = movie.id;
-          return this.fetchYouTubeTrailer(
-            this.selectedMovie.title,
-            this.selectedMovie.release_date
-          );
-        })
-        .then((response) => {
-          const videoId = response.data.items[0].id.videoId;
-          this.trailerUrl = `https://www.youtube.com/embed/${videoId}`;
-        })
-        .catch((error) => {
-          if (
-            error.response &&
-            error.response.data.error.errors[0].reason === 'quotaExceeded'
-          ) {
-            this.quotaExceeded = true;
-          } else {
-            console.error('Error:', error);
-          }
-        });
-    },
+  this.fetchMovieInfo(movie.id)
+    .then(response => {
+      this.selectedMovie = response.data;
+      this.selectedMovie.showFullOverview = false; // 추가
+      return response.data;
+    })
+    .catch(error => {
+      console.error(error);
+    });
+},
     closeModal(event) {
       if (event.target === event.currentTarget) {
         this.showModal = false;
@@ -231,18 +218,32 @@ export default {
         console.error('좋아요 처리 오류:', error);
       }
     },
+    toggleOverview() {
+  if (this.selectedMovie) {
+    this.selectedMovie.showFullOverview = !this.selectedMovie.showFullOverview;
+  }
+},
+    truncateOverview(overview) {
+      if (!overview) {
+        return '';
+      }
+      if (overview.length <= 100) {
+        return overview;
+      }
+      return overview.slice(0, 100) + '...';
+    },
   },
 };
 </script>
 
 <style>
-
 .top-space {
   height: 20px;
 }
 
 .modal {
   position: fixed;
+
   top: 0;
   left: 0;
   width: 100%;
@@ -260,7 +261,7 @@ export default {
   background-color: white;
   padding: 20px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   border-radius: 10px;
 }
@@ -269,14 +270,12 @@ export default {
   display: flex;
   width: 100%;
   justify-content: flex-start;
-  /* 여백 제거 */
   align-items: center;
 }
 
 .youtube-video-wrapper {
   width: 50%;
   padding-bottom: 28%;
-  /* Aspect ratio 16:9 */
   position: relative;
 }
 
@@ -288,10 +287,14 @@ export default {
   height: 100%;
 }
 
+
 .poster-wrapper {
   width: 50%;
-  /* 포스터 너비 설정 */
+  display: flex;
+  justify-content: center;
+  transform: translateX(20px); /* 추가 */
 }
+
 
 .poster-image {
   width: 100%;
@@ -299,18 +302,15 @@ export default {
   object-fit: contain;
 }
 
+
 .error {
   color: red;
   font-weight: bold;
 }
 
+
 .error {
   color: #ff5555;
 }
 
-.section-title {
-  font-size: 36px; /* 더 큰 폰트 사이즈 */
-  text-align: center; /* 가운데 정렬 */
-  margin-bottom: 20px;
-}
 </style>
