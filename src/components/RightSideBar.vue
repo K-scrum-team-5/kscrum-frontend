@@ -26,6 +26,8 @@
 
 <script>
 import axios from 'axios';
+import '@/styles/rightsidebar.css';
+import '@/styles/sidebarstyle.css';
 
 export default {
   props: ['initialLikedMovies'],
@@ -87,40 +89,5 @@ export default {
 </script>
 
 <style scoped>
-.right-sidebar {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 250px;
-  height: 100%;
-  padding: 40px 10px 30px 10px;
-  background: #ffffff;
-  border-left: 1px solid #dbdbdb;
-  transition: 0.3s;
-}
 
-.right-sidebar h3 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.right-sidebar ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.right-sidebar li {
-  margin-bottom: 5px;
-}
-
-/* 다크모드 스타일 */
-.right-sidebar.dark-mode {
-  background-color: #333333;
-  color: #ffffff;
-}
-
-.right-sidebar.dark-mode h3 {
-  color: #ffffff;
-}
 </style>

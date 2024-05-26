@@ -2,35 +2,49 @@
   <div class="top-space"></div>
   <div class="container">
     <!--천장여백-->
+    <!--사이즈 더 크게-->
+    <h1 class="section-title">상영중인 영화</h1>
+    <div class="gallery">
+      <div class="gallery-item" tabindex="0" v-for="(movie, index) in nowPlayingMovies" :key="index">
+        <img :src="movie.poster_path" class="gallery-image" alt="" @click="openExploreModal(movie)" />
+      </div>
+    </div>
+
+
+    <h1 class="section-title">Trending Movies</h1>
+    <div class="gallery">
+      <div class="gallery-item" tabindex="0" v-for="(movie, index) in trendingMovies" :key="index">
+        <img :src="movie.poster_path" class="gallery-image" alt="" @click="openExploreModal(movie)" />
+      </div>
+    </div>
+
+
+
+    <h1 class="section-title">추천영화</h1>
     <div class="gallery">
       <div class="gallery-item" tabindex="0" v-for="(movie, index) in movies" :key="index">
         <img :src="movie.url" class="gallery-image" alt="" @click="openModal(movie)" />
       </div>
     </div>
-
     <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
 
     <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
-  <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
-    <img :src="selectedMovie?.url" alt="Post Image">
-    <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
-      <h3>{{ selectedMovie?.title }}</h3>
-      <p><strong>장르: </strong>{{ selectedMovie?.genreString }}</p>
-      <p class="overview" :class="{ 'expanded': selectedMovie && selectedMovie.showFullOverview }">
-        {{ selectedMovie && selectedMovie.overview }}
-      </p>
-      <p>
-        <button v-if="selectedMovie && selectedMovie.overview && selectedMovie.overview.length > 100"
-                @click="toggleOverview">
-          {{ selectedMovie && selectedMovie.showFullOverview ? '접기' : '펼치기' }}
-        </button>
-      </p>
-      <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }} </p>
-      <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
-      <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
-      <button @click="toggleLike(selectedMovie)">
-        {{ isLiked ? 'Delete from Bookmark' : 'Add to Bookmark' }}
-      </button>
+
+      <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
+        <img v-if="selectedMovie" :src="'http://image.tmdb.org/t/p/w500' + selectedMovie.poster_path">
+        <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
+          <h3 class="modal-title">{{ selectedMovie?.title }}</h3>
+          <p>장르: {{ selectedMovie?.genreString }}</p>
+          <p class="overview"><strong>개요</strong><br>{{ selectedMovie?.overview }}</p>
+          <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
+          <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
+          <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
+         <!-- <p v-if="quotaExceeded" class="error">YouTube API quota exceeded. Showing movie poster instead.</p>-->
+          <button @click="toggleLike(selectedMovie)">
+            {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -41,6 +55,7 @@
 import axios from 'axios';
 import InfiniteLoading from 'vue-infinite-loading';
 import '@/styles/gallery.css';
+import '@/styles/modal.css';
 
 //const YOUTUBE_API_KEY = process.env.VUE_APP_YOUTUBE_API_KEY;
 
@@ -52,6 +67,8 @@ export default {
   props: ['likedMovies'],
   data() {
     return {
+      trendingMovies: [],
+      nowPlayingMovies: [],
       movies: [],
       page: 0,
       showModal: false,
@@ -59,6 +76,9 @@ export default {
       trailerUrl: '',
       quotaExceeded: false,
     };
+  },mounted() {
+    this.fetchTrendingMovies();
+    this.fetchNowPlayingMovies()
   },
   methods: {
     fetchMovies($state) {
@@ -78,6 +98,32 @@ export default {
           console.error(error);
           $state.complete();
         });
+    },
+
+    fetchTrendingMovies() {
+      const trendingUrl = `http://49.50.174.94:8080/api/movie/trending_week?page=0&size=12`;
+      axios
+          .get(trendingUrl)
+          .then((response) => {
+            this.trendingMovies = response.data;
+            this.loadMore({ loaded: () => {}, complete: () => {} }); // Load the initial set of regular movies
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+    },
+
+    fetchNowPlayingMovies() {
+      const nowPlayingUrl = `http://49.50.174.94:8080/api/movie/now_playing?tmdbPage=1&page=0&size=12`;
+      axios
+          .get(nowPlayingUrl)
+          .then((response) => {
+            this.nowPlayingMovies = response.data;
+            this.loadMore({ loaded: () => {}, complete: () => {} }); // Load the initial set of regular movies
+          })
+          .catch((error) => {
+            console.error(error);
+          });
     },
     fetchMovieInfo(id) {
       const url = `http://49.50.174.94:8080/api/movie/details?movieId=${encodeURIComponent(
@@ -111,6 +157,36 @@ export default {
         this.showModal = false;
       }
     },
+
+    openExploreModal(movie) {
+      this.showModal = true;
+      this.trailerUrl = '';
+      this.selectedMovie = movie;
+      this.quotaExceeded = false;
+      this.selectedMovie = movie;
+      this.fetchYouTubeTrailer(movie.title, movie.release_date)
+          .then((response) => {
+            const videoId = response.data.items[0].id.videoId;
+            this.trailerUrl = `https://www.youtube.com/embed/${videoId}`;
+          })
+          .catch((error) => {
+            if (
+                error.response &&
+                error.response.data.error.errors[0].reason === 'quotaExceeded'
+            ) {
+              this.quotaExceeded = true;
+            } else {
+              console.error('Error:', error);
+            }
+          });
+
+    },
+
+
+
+
+
+
     async toggleLike(movie) {
       if (!movie || !movie.id) {
         console.error('유효하지 않은 영화 객체:', movie);
@@ -167,23 +243,21 @@ export default {
 
 .modal {
   position: fixed;
-  top: 50%;
-  left: 50%;
+
+  top: 0;
+  left: 0;
   width: 100%;
-  /* 너비 조정 */
-  height: 80%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 999;
-  padding: 20px;
-
 }
 
 .modal-content {
-  width: 80%;
-  height: 100%;
+  width: 60%;
+  height: 50%;
   background-color: white;
   padding: 20px;
   display: flex;
@@ -228,102 +302,15 @@ export default {
   object-fit: contain;
 }
 
-.modal-info {
-  width: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  margin-left: 0;
-}
-.modal-info img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  margin-bottom: 20px;
-}
-
-.modal-info .overview {
-  display: -webkit-box;
-  -webkit-line-clamp: 8;
-  /* 원하는 줄 수로 설정 */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.modal-info h3 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.modal-info p {
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-
-.modal-info .date {
-  font-size: 14px;
-  color: grey;
-}
 
 .error {
   color: red;
   font-weight: bold;
 }
 
-.dark-mode {
-  background-color: #1a1a1a;
-  color: #ffffff;
-}
-
-.modal.dark-mode {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.modal-content.dark-mode {
-  background-color: #444444;
-  color: #ffffff;
-}
-
-.modal-info.dark-mode {
-  background-color: #333333;
-  color: #ffffff;
-}
-
-.modal-info.dark-mode .date {
-  color: #cccccc;
-}
 
 .error {
   color: #ff5555;
 }
 
-.overview {
-  position: relative;
-  line-height: 1.4;
-  max-height: 4.2em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
-
-.overview.expanded {
-  max-height: none;
-  overflow: visible;
-  text-overflow: initial;
-  display: block;
-}
-
-.overview button {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  background: none;
-  border: none;
-  color: eeeeeee;
-  cursor: pointer;
-}
 </style>

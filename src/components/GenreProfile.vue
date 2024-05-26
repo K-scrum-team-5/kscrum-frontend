@@ -7,7 +7,8 @@
         </div>
         <div class="profile-user-settings">
           <h1 class="profile-user-name">{{ genreName }}</h1>
-          <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog" aria-hidden="true"></i></button>
+          <button class="btn profile-settings-btn" aria-label="profile settings"><i class="fas fa-cog"
+              aria-hidden="true"></i></button>
         </div>
         <div class="profile-stats"></div>
         <div class="profile-bio"></div>
@@ -23,29 +24,18 @@
     </div>
     <div v-if="showModal" class="modal" @click="closeModal" :class="{ 'dark-mode': $root.isDarkMode }">
       <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
-        <div class="modal-video-info">
-          <div class="poster-wrapper">
-            <img v-if="selectedMovie" :src="selectedMovie.url" alt="Post Image" class="poster-image" />
-          </div>
-          <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
-            <h3>{{ selectedMovie?.title }}</h3>
-            <p><strong>장르: </strong>{{ selectedMovie?.genreString }}</p>
-            <p class="overview" :class="{ 'expanded': selectedMovie && selectedMovie.showFullOverview }">
-              {{ selectedMovie && selectedMovie.overview }}
-            </p>
-            <p>
-              <button v-if="selectedMovie && selectedMovie.overview && selectedMovie.overview.length > 100"
-                @click="toggleOverview">
-                {{ selectedMovie && selectedMovie.showFullOverview ? '접기' : '펼치기' }}
-              </button>
-            </p>
-            <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }} </p>
-            <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
-            <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
-            <button @click="toggleLike(selectedMovie)">
-  {{ isLiked(selectedMovie) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
-</button>
-          </div>
+        <img :src="selectedMovie.url" alt="Post Image">
+        <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
+          <h3 class="modal-title">{{ selectedMovie?.title }}</h3>
+          <p>장르: {{ selectedMovie?.genreString }}</p>
+          <p class="overview"><strong>개요</strong><br>{{ selectedMovie?.overview }}</p>
+          <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
+          <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
+          <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
+          <p v-if="quotaExceeded" class="error">YouTube API quota exceeded. Showing movie poster instead.</p>
+          <button @click="toggleLike(selectedMovie)">
+            {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
+          </button>
         </div>
       </div>
     </div>
@@ -56,6 +46,8 @@
 import axios from 'axios';
 import { useRoute } from 'vue-router';
 import InfiniteLoading from 'vue-infinite-loading';
+import '@/styles/modal.css';
+
 
 export default {
   components: {
@@ -72,28 +64,34 @@ export default {
   data() {
     return {
       movies: [],
-      likedMovies: [], // likedMovies 속성을 여기서 정의하고 초기화합니다.
+      likedMovies: [],
       loading: false,
       busy: false,
       page: 0,
       showModal: false,
       selectedMovie: null,
-      trailerUrl: '',
-      quotaExceeded: false,
     };
   },
   mounted() {
     this.fetchMovies();
+    this.fetchLikedMovies();
+  },
+  watch: {
+    likedMovies: {
+      handler() {
+        if (this.selectedMovie) {
+          this.selectedMovie.isLiked = this.isLiked(this.selectedMovie);
+        }
+      },
+      deep: true,
+    },
   },
   methods: {
-    fetchMovieInfo(movieId) {
-      const url = `http://49.50.174.94:8080/api/movie/details?movieId=${encodeURIComponent(movieId)}`;
-      return axios.get(url);
-    },
     fetchMovies($state) {
       this.loading = true;
       const url = `http://49.50.174.94:8080/api/movie/genre?page=${this.page}&size=8&genre=${this.genreName}`;
       axios.get(url)
+
         .then(response => {
           if (response.data.length) {
             this.movies = [...this.movies, ...response.data];
@@ -123,30 +121,40 @@ export default {
     },
     openModal(movie) {
       this.showModal = true;
-      this.trailerUrl = '';
       this.selectedMovie = movie;
-      this.selectedMovie.showFullOverview = false;
-      this.quotaExceeded = false;
 
       this.fetchMovieInfo(movie.id)
-        .then(response => {
-          this.selectedMovie = response.data;
-          this.selectedMovie.id = movie.id;
-          return response.data;
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
+          .then((response) => {
+                this.selectedMovie = response.data;
+                this.selectedMovie.id = movie.id;
+                this.selectedMovie.isLiked = this.isLiked(this.selectedMovie);
+                this.selectedMovie.url = movie.url;
+          });
     },
     closeModal(event) {
       if (event.target === event.currentTarget) {
         this.showModal = false;
       }
     },
-    toggleOverview() {
-      if (this.selectedMovie) {
-        this.selectedMovie.showFullOverview = !this.selectedMovie.showFullOverview;
-      }
+
+    fetchMovieInfo(id) {
+      const url = `http://49.50.174.94:8080/api/movie/details?movieId=${encodeURIComponent(
+          id
+      )}`;
+      return axios.get(url);
+    },
+
+    fetchLikedMovies() {
+      axios.get('http://49.50.174.94:8080/api/movie/mark')
+        .then(response => {
+          this.likedMovies = response.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    isLiked(movie) {
+      return this.likedMovies.some(m => m.id === movie?.id);
     },
     async toggleLike(movie) {
       if (!movie || !movie.id) {
@@ -155,50 +163,28 @@ export default {
       }
 
       const movieId = movie.id;
-      const isLiked = this.likedMovies.some(m => m.id === movieId);
+      const isLiked = this.isLiked(movie);
       const url = `http://49.50.174.94:8080/api/movie/mark/${movieId}?movieId=${movieId}`;
 
       try {
         if (isLiked) {
           await axios.delete(url);
           console.log('좋아요 삭제 완료');
-          this.likedMovies = this.likedMovies.filter(m => m.id !== movieId);
         } else {
           const response = await axios.post(url);
           console.log('좋아요 등록 응답:', response.data);
-          this.likedMovies.push({
-            id: movie.id,
-            title: movie.title,
-            posterPath: movie.poster_path,
-            overview: movie.overview,
-            releaseDate: movie.release_date,
-          });
         }
 
-        const likedMovie = {
-          id: movie.id,
-          title: movie.title,
-          posterPath: movie.poster_path,
-          overview: movie.overview,
-          releaseDate: movie.release_date,
-        };
-        this.$emit('toggle-like', likedMovie);
+        this.fetchLikedMovies();
       } catch (error) {
         console.error('좋아요 처리 오류:', error);
       }
-    },
-    isLiked(movie) {
-      if (!movie || !movie.id || !this.likedMovies) {
-        return false;
-      }
-      return this.likedMovies.some(m => m.id === movie.id);
     },
   },
 };
 </script>
 
 <style>
-
 :root {
   font-size: 10px;
 }
@@ -565,78 +551,6 @@ Remove or comment-out the code block below to see how the browser will fall-back
       margin: 0;
     }
   }
-}
-
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-content {
-  width: 60%;
-  height: 50%;
-  background-color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-radius: 10px;
-}
-
-.modal-content img {
-  width: 50%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.modal-info {
-  width: 30%;
-  padding: 20px;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-info h3 {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.modal-info p {
-  font-size: 14px;
-  margin-bottom: 10px;
-}
-
-.modal-info .date {
-  font-size: 12px;
-  color: grey;
-}
-
-.modal.dark-mode {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.modal-content.dark-mode {
-  background-color: #333333;
-}
-
-.modal-info.dark-mode {
-  background-color: #444444;
-  color: #ffffff;
-}
-
-.modal-info.dark-mode .date {
-  color: #cccccc;
 }
 
 </style>

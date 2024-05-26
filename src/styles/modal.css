@@ -13,9 +13,11 @@
 
 .modal-content {
     width: 80%;
-    height: 90%;
+
+    height: 70%;
+
     background-color: white;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -24,31 +26,79 @@
 }
 
 .modal-content img {
-    width: 50%;
+    width: 40%;
     height: 100%;
     object-fit: contain;
 }
 
 .modal-info {
-    flex-grow: 1;
+
+    font-size: 20px;
+    width: 70%;
+    height: 100%;
     padding: 20px;
     background-color: white;
     display: flex;
     flex-direction: column;
 }
 
+.modal-info .modal-title {
+    font-size: 32px; /* 제목 글자 크기 조정 */
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
 .modal-info h3 {
-    font-size: 18px;
+    font-size: 32px; /* 제목 글자 크기 조정 */
     font-weight: bold;
     margin-bottom: 10px;
 }
 
 .modal-info p {
-    font-size: 14px;
+    font-size: 24px; /* 일반 텍스트 크기 조정 */
     margin-bottom: 10px;
+}
+
+.modal-info .overview {
+    font-size: 20px; /* 개요 텍스트 크기 조정 */
+    white-space: pre-line; /* 줄 바꾸기 */
+    display: -webkit-box;
+    -webkit-line-clamp: 6; /* 원하는 줄 수로 설정 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal-info .overview strong{
+    font-size: 24px; /* 제목 글자 크기 조정 */
+    font-weight: bold;
+    margin-bottom: 10px;
+
 }
 
 .modal-info .date {
     font-size: 12px;
     color: grey;
+}
+
+.post.dark-mode {
+    border-color: #555555;
+}
+
+.modal.dark-mode {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content.dark-mode {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.modal-info.dark-mode {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.modal-info.dark-mode .date {
+    color: #cccccc;
 }
