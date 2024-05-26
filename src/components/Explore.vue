@@ -47,8 +47,7 @@
       </div>
     </div>
   </div>
-</div>
-  </div>
+
 </template>
 
 <script>
@@ -239,31 +238,6 @@ export default {
 <style>
 .top-space {
   height: 20px;
-}
-
-.modal {
-  position: fixed;
-
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-.modal-content {
-  width: 60%;
-  height: 50%;
-  background-color: white;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 10px;
 }
 
 .modal-video-info {
