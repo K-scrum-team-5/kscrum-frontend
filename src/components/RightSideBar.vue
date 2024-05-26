@@ -1,8 +1,8 @@
 <template>
   <aside class="right-sidebar" :class="{ 'dark-mode': isDarkMode }">
-    <h3>Bookmark List</h3>
+    <p style="font-size: 27px; margin-bottom: 20px">Bookmark List</p>
     <ul>
-      <li v-for="movie in likedMovies" :key="movie.id" @click="openModal(movie)">
+      <li style="font-size: 15px" v-for="movie in likedMovies" :key="movie.id" @click="openModal(movie)">
         {{ movie.original_title }}
       </li>
     </ul>
