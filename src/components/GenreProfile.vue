@@ -26,10 +26,15 @@
       <div class="modal-content" @click.stop :class="{ 'dark-mode': $root.isDarkMode }">
         <img :src="selectedMovie.url" alt="Post Image">
         <div class="modal-info" :class="{ 'dark-mode': $root.isDarkMode }">
-          <h3>{{ selectedMovie.original_title }}</h3>
-          <p class="date">{{ selectedMovie.id }}</p>
+          <h3>{{ selectedMovie?.title }}</h3>
+          <p>장르: {{ selectedMovie?.genreString }}</p>
+          <p class="overview">{{ selectedMovie?.overview }}</p>
+          <p><strong>평점:</strong> {{ selectedMovie?.voteAverage }}  </p>
+          <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
+          <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
+          <p v-if="quotaExceeded" class="error">YouTube API quota exceeded. Showing movie poster instead.</p>
           <button @click="toggleLike(selectedMovie)">
-            {{ isLiked(selectedMovie) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
+            {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
           </button>
         </div>
       </div>
@@ -116,12 +121,28 @@ export default {
     openModal(movie) {
       this.showModal = true;
       this.selectedMovie = movie;
+
+      this.fetchMovieInfo(movie.id)
+          .then((response) => {
+                this.selectedMovie = response.data;
+                this.selectedMovie.id = movie.id;
+                this.selectedMovie.isLiked = this.isLiked(this.selectedMovie);
+                this.selectedMovie.url = movie.url;
+          });
     },
     closeModal(event) {
       if (event.target === event.currentTarget) {
         this.showModal = false;
       }
     },
+
+    fetchMovieInfo(id) {
+      const url = `http://49.50.174.94:8080/api/movie/details?movieId=${encodeURIComponent(
+          id
+      )}`;
+      return axios.get(url);
+    },
+
     fetchLikedMovies() {
       axios.get('http://49.50.174.94:8080/api/movie/mark')
         .then(response => {

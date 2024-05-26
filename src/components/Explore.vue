@@ -2,6 +2,25 @@
   <div class="top-space"></div>
   <div class="container">
     <!--천장여백-->
+    <!--사이즈 더 크게-->
+    <h1 class="section-title">상영중인 영화</h1>
+    <div class="gallery">
+      <div class="gallery-item" tabindex="0" v-for="(movie, index) in nowPlayingMovies" :key="index">
+        <img :src="movie.poster_path" class="gallery-image" alt="" @click="openExploreModal(movie)" />
+      </div>
+    </div>
+
+
+    <h1 class="section-title">Trending Movies</h1>
+    <div class="gallery">
+      <div class="gallery-item" tabindex="0" v-for="(movie, index) in trendingMovies" :key="index">
+        <img :src="movie.poster_path" class="gallery-image" alt="" @click="openExploreModal(movie)" />
+      </div>
+    </div>
+
+
+
+    <h1 class="section-title">추천영화</h1>
     <div class="gallery">
       <div class="gallery-item" tabindex="0" v-for="(movie, index) in movies" :key="index">
         <img :src="movie.url" class="gallery-image" alt="" @click="openModal(movie)" />
@@ -55,6 +74,8 @@ export default {
   props: ['likedMovies'],
   data() {
     return {
+      trendingMovies: [],
+      nowPlayingMovies: [],
       movies: [],
       page: 0,
       showModal: false,
@@ -62,6 +83,9 @@ export default {
       trailerUrl: '',
       quotaExceeded: false,
     };
+  },mounted() {
+    this.fetchTrendingMovies();
+    this.fetchNowPlayingMovies()
   },
   methods: {
     fetchMovies($state) {
@@ -81,6 +105,32 @@ export default {
           console.error(error);
           $state.complete();
         });
+    },
+
+    fetchTrendingMovies() {
+      const trendingUrl = `http://49.50.174.94:8080/api/movie/trending_week?page=0&size=12`;
+      axios
+          .get(trendingUrl)
+          .then((response) => {
+            this.trendingMovies = response.data;
+            this.loadMore({ loaded: () => {}, complete: () => {} }); // Load the initial set of regular movies
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+    },
+
+    fetchNowPlayingMovies() {
+      const nowPlayingUrl = `http://49.50.174.94:8080/api/movie/now_playing?tmdbPage=1&page=0&size=12`;
+      axios
+          .get(nowPlayingUrl)
+          .then((response) => {
+            this.nowPlayingMovies = response.data;
+            this.loadMore({ loaded: () => {}, complete: () => {} }); // Load the initial set of regular movies
+          })
+          .catch((error) => {
+            console.error(error);
+          });
     },
     fetchMovieInfo(id) {
       const url = `http://49.50.174.94:8080/api/movie/details?movieId=${encodeURIComponent(
@@ -130,6 +180,36 @@ export default {
         this.showModal = false;
       }
     },
+
+    openExploreModal(movie) {
+      this.showModal = true;
+      this.trailerUrl = '';
+      this.selectedMovie = movie;
+      this.quotaExceeded = false;
+      this.selectedMovie = movie;
+      this.fetchYouTubeTrailer(movie.title, movie.release_date)
+          .then((response) => {
+            const videoId = response.data.items[0].id.videoId;
+            this.trailerUrl = `https://www.youtube.com/embed/${videoId}`;
+          })
+          .catch((error) => {
+            if (
+                error.response &&
+                error.response.data.error.errors[0].reason === 'quotaExceeded'
+            ) {
+              this.quotaExceeded = true;
+            } else {
+              console.error('Error:', error);
+            }
+          });
+
+    },
+
+
+
+
+
+
     async toggleLike(movie) {
       if (!movie || !movie.id) {
         console.error('유효하지 않은 영화 객체:', movie);
@@ -302,5 +382,11 @@ export default {
 
 .error {
   color: #ff5555;
+}
+
+.section-title {
+  font-size: 36px; /* 더 큰 폰트 사이즈 */
+  text-align: center; /* 가운데 정렬 */
+  margin-bottom: 20px;
 }
 </style>
