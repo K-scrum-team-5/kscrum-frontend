@@ -1,5 +1,5 @@
 <template>
-    <aside class="sidebar" :class="{ 'dark-mode': $root.isDarkMode }">
+    <aside class="sidebar" :class="{ 'dark-mode': $root.isDarkMode, 'genre-sidebar' : $route.name === 'genre_profile' }">
     <header class="sidebar-header">
       <img class="logo-img" src="https://raw.githubusercontent.com/zouraiz523/Instagram-Sidebar-/b2750eba8fa31cde49364428bf28fbb41b3a02f0/Instagram%20Sidebar%20Coding/logo.svg" />
       <i class="logo-icon uil uil-instagram"></i>
@@ -51,12 +51,12 @@ import '@/styles/sidebar.css';
 import '@/styles/sidebarstyle.css';
 
 export default {
-
   methods: {
     toggleDarkMode() {
       this.$root.toggleDarkMode();
     },
   },
+  
   setup() {
     const router = useRouter();
 
