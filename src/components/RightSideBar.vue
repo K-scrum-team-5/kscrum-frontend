@@ -1,5 +1,5 @@
 <template>
-  <aside class="right-sidebar" :class="{ 'dark-mode': isDarkMode }">
+  <aside class="right-sidebar" :class="{ 'dark-mode': isDarkMode, 'genre-right-sidebar' : $route.name === 'genre_profile' }">
     <p style="font-size: 27px; margin-bottom: 20px">Bookmark List</p>
     <ul>
       <li style="font-size: 15px" v-for="movie in likedMovies" :key="movie.id" @click="openModal(movie)">

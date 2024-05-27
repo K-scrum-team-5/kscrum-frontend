@@ -208,9 +208,16 @@ img {
 }
 
 .container {
-  max-width: 93.5rem;
+  max-width: 60%;
   margin: 0 auto;
   padding: 0 2rem;
+}
+@media (max-width: 740px) {
+  .container {
+   max-width: 80%;
+   margin: 0 auto;
+   padding: 0 2rem;
+  }
 }
 
 .btn {
@@ -509,6 +516,21 @@ Remove or comment-out the code block below to see how the browser will fall-back
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
     grid-gap: 2rem;
+  }
+  .gallery-image {
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (max-width: 1270px) {
+    .gallery {
+      grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+    }
+  }
+  @media (max-width: 1000px) {
+    .gallery {
+      grid-template-columns: 1fr;
+    }
   }
 
   .profile-image,
