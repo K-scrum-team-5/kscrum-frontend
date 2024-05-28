@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="12" md="8">
-        <h1>영화 검색</h1>
+        <h1 style="margin-top: 20px;">영화 검색</h1>
         <v-text-field v-model="query" @keyup.enter="searchMovies" label="영화 제목을 입력하세요" outlined dense class="search-bar" />
         <div class="search-button-container">
           <v-btn @click="searchMovies" color="primary" class="search-button">검색</v-btn>
