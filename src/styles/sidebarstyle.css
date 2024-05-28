@@ -6,10 +6,10 @@
       width: 27%;
     }
     .genre-right-sidebar {
-      width: 19%;
+      width: 20%;
     }
     .genre-sidebar {
-      width: 19%;
+      width: 20%;
     }
   }
   @media (max-width: 1270px) {
@@ -34,14 +34,10 @@
       width: 25%;
     }
     .genre-right-sidebar {
-      width: 0;
-      opacity: 0;
-      pointer-events: none;
+      width: 19%;
     }
-    .genre-sidebar { 
-        width: 0; 
-        opacity: 0;
-        pointer-events: none;
+    .genre-sidebar {
+      width: 19%;
     }
   }
   @media (max-width: 970px) {

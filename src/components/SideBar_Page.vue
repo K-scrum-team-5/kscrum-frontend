@@ -35,12 +35,10 @@
           <span>다크모드</span>
         </span>
       </button>
-      <button>
-        <span>
-          <i class="uil uil-bars"></i>
-          <span></span>
-        </span>
-      </button>
+      <span>
+        <i class="uil uil-bars"></i>
+        <span></span>
+      </span>
     </nav>
   </aside>
 </template>

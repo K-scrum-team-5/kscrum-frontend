@@ -1,6 +1,20 @@
 <template>
   <v-app :class="{ 'dark-mode': isDarkMode }">
     <v-main>
+      <v-btn icon @click="BottomSheet" v-if="isMobile" class="btn-mobile" :class="{ 'dark-mode' : $root.isDarkMode }">
+        <v-icon>mdi-menu</v-icon>
+      </v-btn>
+
+      <v-bottom-sheet v-model="bottomSheet" inset hide-overlay>
+        <v-container>
+          <v-list :class="{ 'dark-mode' : isDarkMode }">
+            <v-list-item v-for="(item, index) in menuItems" :key="index" @click="goToPage(item.path)">
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-container>
+      </v-bottom-sheet>
+
       <template v-if="isExploreRoute">
         <SideBar_Page />
         <ExplorePage ref="explorePage" :likedMovies="likedMovies" @toggle-like="toggleLike" />
@@ -60,8 +74,17 @@ export default {
       page: 0,
       isDarkMode: false,
       likedMovies: [],
+      bottomSheet: false,
+      isMobile: window.innerWidth < 971,
+      menuItems: [
+        { title: 'Home', path: '/' },
+        { title: 'Search', path: '/search' },
+        { title: 'Explore', path: '/explore' },
+        { title: '영화취향설정', path: '/choice' }
+      ],
     };
   },
+
   components: {
     Container_Page,
     SideBar_Page,
@@ -71,6 +94,7 @@ export default {
     InfiniteLoading,
     GenreProfile,
   },
+
   setup() {
     const router = useRouter();
     const route = useRoute();
@@ -91,11 +115,18 @@ export default {
       isSearchRoute
     };
   },
+
   mounted() {
     this.fetchMovies();
     const isDarkMode = localStorage.getItem('isDarkMode') === 'true';
     this.isDarkMode = isDarkMode;
+    window.addEventListener('resize', this.handle_size);
   },
+
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handle_size);
+  },
+
   methods: {
     toggleDarkMode() {
       this.isDarkMode = !this.isDarkMode;
@@ -139,6 +170,15 @@ export default {
         this.likedMovies.push(likedMovie);
       }
       this.$refs.rightSideBar.fetchLikedMovies();
+    },
+    handle_size() {
+      this.isMobile = window.innerWidth < 971;
+    },
+    BottomSheet() {
+      this.bottomSheet = !this.bottomSheet;
+    },
+    goToPage(path) {
+      this.$router.push(path);
     },
   },
 };
@@ -222,8 +262,22 @@ ul {
   margin-right: 250px;
 }
 
-.v-btn {
-  text-transform: none;
+.btn-mobile {
+  font-size: medium;
+  cursor: pointer;
+  text-align: center;
+  align-self: left;
+  padding: 10px;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.v-bottom-sheet {
+  position: fixed;
+  z-index: 9999;
+  color: black;
 }
 
 .v-container {

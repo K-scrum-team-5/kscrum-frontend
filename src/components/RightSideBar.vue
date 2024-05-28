@@ -31,6 +31,7 @@ import '@/styles/sidebarstyle.css';
 
 export default {
   props: ['initialLikedMovies'],
+
   data() {
     return {
       likedMovies: this.initialLikedMovies,
@@ -39,17 +40,21 @@ export default {
       pollingInterval: null,
     };
   },
+
   computed: {
     isDarkMode() {
       return this.$root.isDarkMode;
     },
   },
+
   mounted() {
     this.startPolling();
   },
+
   beforeUnmount() {
     this.stopPolling();
   },
+  
   methods: {
     fetchLikedMovies() {
       axios.get('http://49.50.174.94:8080/api/movie/mark')
