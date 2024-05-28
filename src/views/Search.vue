@@ -19,13 +19,12 @@
 <script>
 import axios from 'axios';
 import MovieList from '../components/MovieList.vue';
-import MovieDetail from '../components/MovieDetail.vue';
 
 export default {
+  // eslint-disable-next-line vue/multi-word-component-names
   name: 'Search',
   components: {
     MovieList,
-    MovieDetail
   },
   data() {
     return {

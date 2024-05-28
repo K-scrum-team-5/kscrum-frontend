@@ -574,5 +574,11 @@ Remove or comment-out the code block below to see how the browser will fall-back
     }
   }
 }
-
+.gallery-item {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.gallery-item:hover {
+  transform: scale(1.05);
+}
 </style>
