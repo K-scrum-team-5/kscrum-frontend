@@ -17,22 +17,22 @@
 
       <template v-if="isExploreRoute">
         <SideBar_Page />
+        <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
         <ExplorePage ref="explorePage" :likedMovies="likedMovies" @toggle-like="toggleLike" />
         <div class="footer"></div>
-        <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
       </template>
       <template v-else-if="isOpenGenre">
         <SideBar_Page />
+        <RightSideBar ref="rightSideBar" :initialLikedMovies="likedMovies" @open-modal="openModal" />
         <GenreProfile />
         <div class="footer"></div>
-        <RightSideBar ref="rightSideBar" :initialLikedMovies="likedMovies" @open-modal="openModal" />
       </template>
 
       <!-- 검색 페이지 -->
       <template v-else-if="isSearchRoute">
         <SideBar_Page />
-        <router-view />
         <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
+        <router-view />
       </template>
 
       <template v-else>
@@ -42,10 +42,10 @@
             <div style="width: 470px;">
               <StoryProfiles @open-genre="openGenre" />
               <SideBar_Page />
+              <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
               <Container_Page :movies="movies" />
               <InfiniteLoading @infinite="loadMore" ref="infiniteLoading" />
               <div class="footer"></div>
-              <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
             </div>
           </div>
         </template>
