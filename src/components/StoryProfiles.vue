@@ -50,10 +50,20 @@ export default {
   
   <style scoped>
   .stories {
-  display: flex;
-  overflow-x: auto;
-  padding: 10px;
-  background: white;
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    background: white;
+  }
+@media (max-width: 740px) {
+  .stories {
+    margin: 0 auto;
+    width: 80%;
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    background: white;
+  }
 }
 
 .story {

@@ -114,6 +114,13 @@ export default {
   width: 100%;
 }
 
+@media (max-width: 740px) {
+  .post {
+    width: 80%;
+    margin: 0 auto;
+  }
+}
+
 .profile {
   background-image: url("https://picsum.photos/100?random=0");
   width: 30px;
