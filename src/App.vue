@@ -13,6 +13,14 @@
         <div class="footer"></div>
         <RightSideBar ref="rightSideBar" :initialLikedMovies="likedMovies" @open-modal="openModal" />
       </template>
+
+      <!-- 검색 페이지 -->
+      <template v-else-if="isSearchRoute">
+        <SideBar_Page />
+        <router-view />
+        <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
+      </template>
+
       <template v-else>
         <router-view />
         <template v-if="!isChoiceRoute">
@@ -70,6 +78,7 @@ export default {
     const isChoiceRoute = computed(() => route.path === '/choice');
     const isExploreRoute = computed(() => route.path === '/explore');
     const isOpenGenre = computed(() => route.path.startsWith('/genre'));
+    const isSearchRoute = computed(() => route.path.startsWith('/search')); //검색 추가
     const openGenre = (genreName) => {
       router.push({ name: 'genre_profile', params: { genreName } });
     };
@@ -79,6 +88,7 @@ export default {
       openGenre,
       isExploreRoute,
       isOpenGenre,
+      isSearchRoute
     };
   },
   mounted() {

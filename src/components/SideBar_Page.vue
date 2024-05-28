@@ -11,7 +11,7 @@
           <span>Home</span>
         </span>
       </button>
-      <button>
+      <button @click="goToSearch"> <!--검색 추가-->
         <span>
           <i class="uil uil-search"></i>
           <span>Search</span>
@@ -72,11 +72,16 @@ export default {
     const goToExplore = () => {
       router.push('/explore'); // Explore 페이지로 라우팅
     };
+
+    const goToSearch = () => { //검색 추가
+      router.push('/search');
+    }
     
     return {
       goToHome,
       goto_choice,
       goToExplore,
+      goToSearch
     };
   },
   
