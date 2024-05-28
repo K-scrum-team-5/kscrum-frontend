@@ -3,7 +3,7 @@
   <div class="container">
     <!--천장여백-->
     <!--사이즈 더 크게-->
-    <h1 class="section-title">상영중인 영화</h1>
+    <h1 class="section-title" style="margin-bottom: 10px;">상영중인 영화</h1>
     <div class="gallery">
       <div class="gallery-item" tabindex="0" v-for="(movie, index) in nowPlayingMovies" :key="index">
         <img :src="movie.poster_path" class="gallery-image" alt="" @click="openExploreModal(movie)" />

@@ -11,6 +11,7 @@
             <v-list-item v-for="(item, index) in menuItems" :key="index" @click="goToPage(item.path)">
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
+            <v-list-item @click="toggleDarkMode" dark>다크 모드 </v-list-item>
           </v-list>
         </v-container>
       </v-bottom-sheet>
