@@ -40,9 +40,6 @@
           <p><strong>개봉일:</strong> {{ selectedMovie?.release_date }}</p>
           <p><strong>러닝타임:</strong> {{ selectedMovie?.runtime }}분</p>
          <!-- <p v-if="quotaExceeded" class="error">YouTube API quota exceeded. Showing movie poster instead.</p>-->
-          <button @click="toggleLike(selectedMovie)">
-            {{ likedMovies.some(m => m.id === selectedMovie?.id) ? 'Delete from Bookmark' : 'Add to Bookmark' }}
-          </button>
         </div>
       </div>
     </div>
