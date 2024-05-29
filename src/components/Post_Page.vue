@@ -50,7 +50,7 @@ export default {
     return {
       selectedMovie: null,
       showModal: false,
-      isLiked: false,
+      isLiked: this.movies.marked
     };
   },
   methods: {
