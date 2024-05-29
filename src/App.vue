@@ -18,14 +18,15 @@
 
       <template v-if="isExploreRoute">
         <SideBar_Page />
-        <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
         <ExplorePage ref="explorePage" :likedMovies="likedMovies" @toggle-like="toggleLike" />
+        <RightSideBar ref="rightSideBar" :likedMovies="likedMovies" @open-modal="openModal" />
         <div class="footer"></div>
       </template>
+
       <template v-else-if="isOpenGenre">
         <SideBar_Page />
-        <RightSideBar ref="rightSideBar" :initialLikedMovies="likedMovies" @open-modal="openModal" />
         <GenreProfile />
+        <RightSideBar ref="rightSideBar" :initialLikedMovies="likedMovies" @open-modal="openModal" />
         <div class="footer"></div>
       </template>
 

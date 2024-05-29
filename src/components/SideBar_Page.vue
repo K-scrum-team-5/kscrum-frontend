@@ -1,9 +1,11 @@
 <template>
     <aside class="sidebar" :class="{ 'dark-mode': $root.isDarkMode, 'genre-sidebar' : $route.name === 'genre_profile' || $route.name === 'explore' || $route.name === 'Search' }">
-    <header class="sidebar-header">
-      <img class="logo-img" src="https://raw.githubusercontent.com/zouraiz523/Instagram-Sidebar-/b2750eba8fa31cde49364428bf28fbb41b3a02f0/Instagram%20Sidebar%20Coding/logo.svg" />
+    <div class="logo-container">
+      <header class="sidebar-header">
+      <v-img class="logo-img"  src="@/assets/moviestagram.png" alt="<Logo>"></v-img>
       <i class="logo-icon uil uil-instagram"></i>
     </header>
+  </div>
     <nav>
       <button @click="goToHome">
         <span>
