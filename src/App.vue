@@ -119,7 +119,7 @@ export default {
   },
 
   mounted() {
-    this.fetchMovies();
+    //this.fetchMovies();
     const isDarkMode = localStorage.getItem('isDarkMode') === 'true';
     this.isDarkMode = isDarkMode;
     window.addEventListener('resize', this.handle_size);

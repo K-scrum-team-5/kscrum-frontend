@@ -73,7 +73,7 @@ export default {
     };
   },
   mounted() {
-    this.fetchMovies();
+    //this.fetchMovies();
     this.fetchLikedMovies();
   },
   watch: {
