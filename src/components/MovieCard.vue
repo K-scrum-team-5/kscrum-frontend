@@ -13,8 +13,8 @@
         <p><strong>평점: </strong> {{ selectedMovie?.voteAverage }}  </p>
         <p><strong>개봉일: </strong> {{ selectedMovie?.release_date }}</p>
         <p><strong>러닝타임: </strong> {{ selectedMovie?.runtime }}분</p>
-        <button @click="toggleLike(movies)">
-          {{ isLiked ? 'Delete from Bookmark' : 'Add to Bookmark' }}
+        <button @click="toggleLike(selectedMovie)">
+          {{ isLiked ? '나중에 볼 영화 삭제' : '나중에 볼 영화 추가' }}
         </button>
       </div>
     </div>
@@ -38,6 +38,7 @@
     },
       data() {
         return {
+          isLiked: false,
           selectedMovie: null,
           showModal: false,
         };
@@ -63,12 +64,45 @@
         this.fetchMovieInfo(movieId)
             .then(response => {
               this.selectedMovie = response.data;
+              this.selectedMovie.id=movieId;
               return response.data;
             });
       },
       closeModal(event) {
         if (event.target === event.currentTarget) {
           this.showModal = false;
+        }
+      },
+      async toggleLike(movie) {
+        if (!movie || !movie.id) {
+          console.error('유효하지 않은 영화 객체:', movie);
+          return;
+        }
+
+        const movieId = movie.id;
+        const url = `http://49.50.174.94:8080/api/movie/mark/${movieId}?movieId=${movieId}`;
+
+        try {
+          if (this.isLiked) {
+            await axios.delete(url);
+            console.log('좋아요 삭제 완료');
+          } else {
+            const response = await axios.post(url);
+            console.log('좋아요 등록 응답:', response.data);
+          }
+
+          this.isLiked = !this.isLiked;
+
+          const likedMovie = {
+            id: movie.id,
+            title: movie.title,
+            posterPath: movie.poster_path,
+            overview: movie.overview,
+            releaseDate: movie.release_date,
+          };
+          this.$emit('toggle-like', likedMovie);
+        } catch (error) {
+          console.error('좋아요 처리 오류:', error);
         }
       },
     }

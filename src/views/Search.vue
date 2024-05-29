@@ -56,7 +56,9 @@ export default {
     },
     showDetailModal(movieId) {
       this.selectedMovieId = movieId; // 모달 창을 띄우기 위해 선택된 영화의 ID를 저장
-    }
+    },
+
+
   }
 };
 </script>

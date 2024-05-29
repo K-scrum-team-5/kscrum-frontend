@@ -110,9 +110,12 @@ export default {
 </script>
 
 <style scoped>
+
+
 .post {
   width: 100%;
 }
+
 
 @media (max-width: 740px) {
   .post {
