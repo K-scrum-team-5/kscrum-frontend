@@ -66,6 +66,7 @@ import RightSideBar from './components/RightSideBar.vue';
 import ExplorePage from './components/Explore.vue';
 import InfiniteLoading from 'vue-infinite-loading';
 import GenreProfile from './components/GenreProfile';
+import '@/styles/font.css'
 
 export default {
   name: 'App',
@@ -287,7 +288,7 @@ ul {
 
 #app {
   box-sizing: border-box;
-  font-family: 'consolas';
+  font-family: 'GmarketSansTTFLight';
   margin-top: 60px;
   width: 100%;
   margin: auto;
