@@ -1,0 +1,17 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-size: medium;
+  }
+  
+  //반응형 레이아웃 >> 적용 안 되고 있음
+  @media (max-width: 600px) {
+    .movie-poster {
+      width: 50%; //좁은 화면
+    }
+  }
+  @media (min-width: 601px) {
+    .movie-poster {
+      width: 25%; //넓은 화면
+    }
+  }

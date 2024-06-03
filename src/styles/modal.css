@@ -1,0 +1,144 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modal-content {
+    width: 80%;
+    max-width: 800px;
+    height: 70%;
+    max-height: 600px;
+    background-color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 10px;
+  }
+  
+  .modal-content img {
+    width: 40%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  .modal-info {
+    font-size: 18px;
+    width: 60%;
+    height: 100%;
+    padding: 20px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modal-info .modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .modal-info h3 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .modal-info p {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .modal-info .overview {
+    font-size: 16px;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .modal-info .overview strong {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .modal-info .date {
+    font-size: 12px;
+    color: grey;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .modal-content {
+      flex-direction: column;
+      height: 80%;
+      max-height: none;
+    }
+  
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      max-height: 40%;
+      object-fit: contain;
+      margin-bottom: 20px;
+    }
+  
+    .modal-info {
+      width: 100%;
+      height: 60%;
+      padding: 0 20px;
+      font-size: 15px;
+    }
+  
+    .modal-info .modal-title {
+      font-size: 15px;
+    }
+  
+    .modal-info h3 {
+      font-size: 15px;
+    }
+  
+    .modal-info p {
+      font-size: 15px;
+    }
+  
+    .modal-info .overview {
+      font-size: 15px;
+    }
+  
+    .modal-info .overview strong {
+      font-size: 15px;
+    }
+  }
+  
+  .post.dark-mode {
+    border-color: #555555;
+  }
+  
+  .modal.dark-mode {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .modal-content.dark-mode {
+    background-color: #333333;
+    color: #ffffff;
+  }
+  
+  .modal-info.dark-mode {
+    background-color: #333333;
+    color: #ffffff;
+  }
+  
+  .modal-info.dark-mode .date {
+    color: #cccccc;
+  }
