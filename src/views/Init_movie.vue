@@ -67,7 +67,7 @@
 
   <script>
   import axios from 'axios';
-  import router from '@/router/index';
+//  import router from '@/router/index';
 
   export default {
     name: 'Init_movie',
@@ -101,13 +101,19 @@
         return this.selectedMovies.some(m => m === movie); // 선택 여부 확인
       },
       goToMovieFeed() {
-        if (router) {
-          router.push({ path: '/' });
-          console.log("button clicked(/)");
+        if (this.$router) {
+          this.$router.push({ path: '/' }).then(() => {
+            console.log("button clicked(/)");
+            window.location.reload(); // 페이지를 새로 고침
+            window.location.reload();
+          }).catch((error) => {
+            console.error("Error during routing:", error);
+          });
         } else {
-          console.error("Router instance is undefined"); 
+          console.error("Router instance is undefined");
         }
       },
+
       async refresh(genre_name) {
         try {
           const index = this.genres.findIndex(genre => genre.genre === genre_name);
