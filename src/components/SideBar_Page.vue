@@ -49,14 +49,24 @@
 import { useRouter } from 'vue-router';
 import '@/styles/sidebar.css';
 import '@/styles/sidebarstyle.css';
+import axios from 'axios';
 
 export default {
   methods: {
     toggleDarkMode() {
       this.$root.toggleDarkMode();
     },
+
+    async resetMovie() {
+      const url = `http://49.50.174.94:8080/api/db/reset/prority`;
+      try {
+        await axios.post(url);
+      } catch (error) {
+        console.error("Error resetting movie priority:", error);
+      }
+    },
   },
-  
+
   setup() {
     const router = useRouter();
 
@@ -64,10 +74,21 @@ export default {
       router.push('/');
     };
 
-    const goto_choice = () => {
+    const resetMovie = async () => {
+      const url = `http://49.50.174.94:8080/api/db/reset/prority`;
+      try {
+        await axios.post(url);
+      } catch (error) {
+        console.error("Error resetting movie priority:", error);
+      }
+    };
+
+    const goto_choice = async () => {
       console.log("button clicked(/choice)");
+      await resetMovie();  // 이 부분에서 resetMovie를 호출합니다.
       router.push('/choice');
     };
+
 
     const goToExplore = () => {
       router.push('/explore'); // Explore 페이지로 라우팅
